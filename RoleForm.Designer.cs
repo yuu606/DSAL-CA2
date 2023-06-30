@@ -1,6 +1,6 @@
 ﻿namespace DSAL_CA2
 {
-    partial class Form1
+    partial class RoleForm
     {
         /// <summary>
         ///  Required designer variable.
