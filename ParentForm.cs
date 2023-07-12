@@ -19,7 +19,9 @@ namespace DSAL_CA2
         public ParentForm()
         {
             InitializeComponent();
-            this.roleFormToolStripMenuItem.Click += new EventHandler(this.RoleFormToolStripMenuItem_Click);
+            this.roleToolStripMenuItem.Click += new EventHandler(this.RoleFormToolStripMenuItem_Click);
+            this.employeeToolStripMenuItem.Click += new EventHandler(this.EmployeeFormToolStripMenuItem_Click);
+            this.projectToolStripMenuItem.Click += new EventHandler(this.ProjectFormToolStripMenuItem_Click);
         }
 
         private void RoleFormToolStripMenuItem_Click(object sender, EventArgs e)
@@ -50,7 +52,7 @@ namespace DSAL_CA2
             }
         }
 
-        private void safeDistanceSmartModeToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ProjectFormToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (form3 != null)
             {
@@ -62,6 +64,11 @@ namespace DSAL_CA2
                 form3.MdiParent = this;
                 form3.Show();
             }
+        }
+
+        private void ParentForm_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

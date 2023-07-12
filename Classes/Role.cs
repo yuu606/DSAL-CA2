@@ -10,43 +10,24 @@ namespace DSAL_CA2.Classes
     [Serializable]
     internal class Role
     {
-        private string _uuid; // Role UUID
-        private string _name; // Role Name
-        private RoleTreeNode _container; // References the RoleTreeNode object that contains the role
-        //two constructors
-        public Role()
-        {
-        }//end of constructor
+        public RoleTreeNode Container { get; set; }
+        public string UUID { get; set; }
+        public string Name { get; set; }
+        public bool isProjLead { get; set; }  
+
+        public Role(){ }//end of constructor
+
         public Role(string name)
         {
-            _uuid = General.GenerateUUID();
-            _name = name;
+            UUID = General.GenerateUUID();
+            Name = name;
+            isProjLead = false;
         } // end of constructor
         //end of two constructors
-        public RoleTreeNode Container
-        {
-            get { return _container; }
-            set { _container = value; }
-        }
-        public string UUID
-        {
-            get { return _uuid; }
-            set { _uuid = value; }
-        } // End of UUID property
-
-        public string Name
-        {
-            get { return _name; }
-            set
-            {
-                _name = value;
-
-            }
-        } // End of Name property
 
         public void EditRole(string name)
         {
-            _name = name;
+            Name = name;
         }// End of EditRole method
     }//end of Role class
 }

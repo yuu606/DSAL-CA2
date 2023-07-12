@@ -28,18 +28,93 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
+            contextMenuStrip1 = new ContextMenuStrip(components);
+            menuStrip1 = new MenuStrip();
+            menuStrip2 = new MenuStrip();
+            formsToolStripMenuItem = new ToolStripMenuItem();
+            roleToolStripMenuItem = new ToolStripMenuItem();
+            employeeToolStripMenuItem = new ToolStripMenuItem();
+            projectToolStripMenuItem = new ToolStripMenuItem();
+            menuStrip2.SuspendLayout();
             SuspendLayout();
             // 
-            // Form4
+            // contextMenuStrip1
+            // 
+            contextMenuStrip1.ImageScalingSize = new Size(24, 24);
+            contextMenuStrip1.Name = "contextMenuStrip1";
+            contextMenuStrip1.Size = new Size(61, 4);
+            // 
+            // menuStrip1
+            // 
+            menuStrip1.ImageScalingSize = new Size(24, 24);
+            menuStrip1.Location = new Point(0, 33);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new Size(1513, 24);
+            menuStrip1.TabIndex = 1;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // menuStrip2
+            // 
+            menuStrip2.ImageScalingSize = new Size(24, 24);
+            menuStrip2.Items.AddRange(new ToolStripItem[] { formsToolStripMenuItem });
+            menuStrip2.Location = new Point(0, 0);
+            menuStrip2.Name = "menuStrip2";
+            menuStrip2.Size = new Size(1513, 33);
+            menuStrip2.TabIndex = 2;
+            menuStrip2.Text = "menuStrip2";
+            // 
+            // formsToolStripMenuItem
+            // 
+            formsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { roleToolStripMenuItem, employeeToolStripMenuItem, projectToolStripMenuItem });
+            formsToolStripMenuItem.Name = "formsToolStripMenuItem";
+            formsToolStripMenuItem.Size = new Size(78, 29);
+            formsToolStripMenuItem.Text = "Forms";
+            // 
+            // roleToolStripMenuItem
+            // 
+            roleToolStripMenuItem.Name = "roleToolStripMenuItem";
+            roleToolStripMenuItem.Size = new Size(192, 34);
+            roleToolStripMenuItem.Text = "Role";
+            // 
+            // employeeToolStripMenuItem
+            // 
+            employeeToolStripMenuItem.Name = "employeeToolStripMenuItem";
+            employeeToolStripMenuItem.Size = new Size(192, 34);
+            employeeToolStripMenuItem.Text = "Employee";
+            // 
+            // projectToolStripMenuItem
+            // 
+            projectToolStripMenuItem.Name = "projectToolStripMenuItem";
+            projectToolStripMenuItem.Size = new Size(192, 34);
+            projectToolStripMenuItem.Text = "Project";
+            // 
+            // ParentForm
             // 
             AutoScaleDimensions = new SizeF(10F, 25F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1240, 713);
-            Name = "Form4";
-            Text = "Form4";
+            ClientSize = new Size(1513, 856);
+            Controls.Add(menuStrip1);
+            Controls.Add(menuStrip2);
+            IsMdiContainer = true;
+            MainMenuStrip = menuStrip1;
+            Name = "ParentForm";
+            Text = "ParentForm";
+            Load += ParentForm_Load;
+            menuStrip2.ResumeLayout(false);
+            menuStrip2.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
+
+        private ContextMenuStrip contextMenuStrip1;
+        private MenuStrip menuStrip1;
+        private MenuStrip menuStrip2;
+        private ToolStripMenuItem formsToolStripMenuItem;
+        private ToolStripMenuItem roleToolStripMenuItem;
+        private ToolStripMenuItem employeeToolStripMenuItem;
+        private ToolStripMenuItem projectToolStripMenuItem;
     }
 }

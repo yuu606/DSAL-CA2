@@ -1,5 +1,6 @@
 ﻿using DSAL_CA1.Classes;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,67 +16,34 @@ namespace DSAL_CA2.Classes
     //in this DataManager instead of having seperate RoleManager, EmployeeManager and ProjectManager class
     //****************************************************************************************
     {
-        RoleTreeNode _roleTreeStructure;
+        public RoleTreeNode RoleTreeStructure { get; set; }
+        public EmployeeTreeNode EmployeeTreeStructure { get; set; }
+        public List<Project> ProjectTreeStructure { get; set; }   
         private string _filePath; // Saved data file path
+
         public DataManager()
         {
             _filePath = System.IO.Path.GetDirectoryName(Application.ExecutablePath) + "\\Data.dat";
-            _roleTreeStructure = new RoleTreeNode(new Role("ROOT"));
         }
-        public RoleTreeNode GenerateFakeTreeStructure()
-        {
-            _roleTreeStructure = new RoleTreeNode(new Role("ROOT"));
-            Role role1 = new Role("CEO");
-            RoleTreeNode node1 = new RoleTreeNode(role1);
-            _roleTreeStructure.AddChildRoleTreeNode(node1);
-            Role role2 = new Role("ADVISORY BOARD");
-            RoleTreeNode node2 = new RoleTreeNode(role2);
-            node1.AddChildRoleTreeNode(node2);
-            Role role3 = new Role("STAFF DIRECTOR");
-            RoleTreeNode node3 = new RoleTreeNode(role3);
-            node1.AddChildRoleTreeNode(node3);
 
-            Role role4 = new Role("VOLUNTEER DIRECTOR");
-            RoleTreeNode node4 = new RoleTreeNode(role4);
-            node1.AddChildRoleTreeNode(node4);
-            Role role5 = new Role("FINANCE DIRECTOR");
-            RoleTreeNode node5 = new RoleTreeNode(role5);
-            node3.AddChildRoleTreeNode(node5);
-            Role role5_1 = new Role("FINANCE SPECIALIST");
-            RoleTreeNode node5_1 = new RoleTreeNode(role5_1);
-            node5.AddChildRoleTreeNode(node5_1);
-            Role role6 = new Role("COMMUNICATIONS DIRECTOR");
-            RoleTreeNode node6 = new RoleTreeNode(role6);
-            node3.AddChildRoleTreeNode(node6);
-            Role role6_1 = new Role("COMMUNICATIONS SPECIALIST");
-            RoleTreeNode node6_1 = new RoleTreeNode(role6_1);
-            node6.AddChildRoleTreeNode(node6_1);
-            Role role7 = new Role("FUND RAISING DIRECTOR");
-            RoleTreeNode node7 = new RoleTreeNode(role7);
-            node3.AddChildRoleTreeNode(node7);
-            Role role7_1 = new Role("FUND RAISING SPECIALIST");
-            RoleTreeNode node7_1 = new RoleTreeNode(role7_1);
-            node7.AddChildRoleTreeNode(node7_1);
-            Role role8 = new Role("PROGRAM DIRECTOR");
-            RoleTreeNode node8 = new RoleTreeNode(role8);
-            node3.AddChildRoleTreeNode(node8);
-            Role role8_1 = new Role("PROGRAM SPECIALIST");
-            RoleTreeNode node8_1 = new RoleTreeNode(role8_1);
-            node8.AddChildRoleTreeNode(node8_1);
-            Role role9 = new Role("OPERATIONS DIRECTOR");
-            RoleTreeNode node9 = new RoleTreeNode(role9);
-            node3.AddChildRoleTreeNode(node9);
-            Role role9_1 = new Role("OPERATIONS SPECIALIST");
-            RoleTreeNode node9_1 = new RoleTreeNode(role9_1);
-            node9.AddChildRoleTreeNode(node9_1);
-            return _roleTreeStructure;
-        }//end of GenerateFakeTreeStructure
-
-        public RoleTreeNode RoleTreeStructure
+        public RoleTreeNode generateDefaultRoleTree()
         {
-            get { return _roleTreeStructure; }
-            set { _roleTreeStructure = value; }
+            RoleTreeStructure = new RoleTreeNode(new Role("ROOT"));
+            return RoleTreeStructure;   
         }
+
+        public EmployeeTreeNode generateDefaultEmployeeTree()
+        {
+            EmployeeTreeStructure = new EmployeeTreeNode(new Employee("ROOT"));
+            return EmployeeTreeStructure;
+        }
+
+        /*public ProjectTreeNode generateDefaultProjectTree()
+        {
+            ProjectTreeStructure = new ProjectTreeNode(new Project("ROOT"));
+            return ProjectTreeStructure;
+        }*/
+
         public void SaveRoleData()
         {
             this.RoleTreeStructure.SaveToFileBinary(_filePath);
@@ -88,6 +56,18 @@ namespace DSAL_CA2.Classes
             return this.RoleTreeStructure;
 
         } //end of LoadRoleData method
+
+        public void SaveEmployeeData()
+        {
+            this.EmployeeTreeStructure.SaveToFileBinary(_filePath);
+        }
+
+        public EmployeeTreeNode LoadEmployeeData()
+        {
+            this.EmployeeTreeStructure = this.EmployeeTreeStructure.ReadFromFileBinary(_filePath);
+            this.EmployeeTreeStructure.RebuildTreeNodes();
+            return this.EmployeeTreeStructure;
+        }
 
     }//end of class RoleManager
 }

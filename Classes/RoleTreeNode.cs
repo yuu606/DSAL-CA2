@@ -15,37 +15,28 @@ namespace DSAL_CA1.Classes
     [Serializable]
     internal class RoleTreeNode : TreeNode, ISerializable
     {
-        private RoleTreeNode _parentRoleTreeNode; // RoleTreeNode type object which describes the "Parent"
-        private Role _role; // To hold the Role object which describes one role information
-        //A collection of RoleTreeNode type objects which describes the "Children"
-        private List<RoleTreeNode> _children;
+        
+        //variable getters and setters 
+        public RoleTreeNode ParentRoleTreeNode { get; set; }
+        public Role Role { get; set; }
+        public List<RoleTreeNode> ChildRoleTreeNodes { get; set; }
 
         //Two constructors
         public RoleTreeNode(Role role)
         {
-            _parentRoleTreeNode = null;
-            _children = new List<RoleTreeNode>();
-            _role = role;
-            _role.Container = this;
+            ParentRoleTreeNode = null;
+            ChildRoleTreeNodes = new List<RoleTreeNode>();
+            Role = role;
+            Role.Container = this;
             this.Text = role.Name;
         } // end of constructor
-        public RoleTreeNode()
-        {
-
-        } // End of constructor
+        public RoleTreeNode() { } // End of constructor
         //End of two constructors
-
-        public RoleTreeNode ParentRoleTreeNode { get; set; }
-
-        public Role Role { get; set; }
-
-        public List<RoleTreeNode> ChildRoleTreeNodes { get; set; }
-
 
         public void AddChildRoleTreeNode(RoleTreeNode roleNode)
         {
             roleNode.ParentRoleTreeNode = this;
-            _children.Add(roleNode);
+            ChildRoleTreeNodes.Add(roleNode);
             this.Nodes.Add(roleNode);
         } // End of AddChildRoleTreeNode method
 
@@ -68,7 +59,7 @@ namespace DSAL_CA1.Classes
             }
 
         }//End of RebuildTreeNodes
-        // File IO Functions ----------------------------------------------------------------------------------------------
+        // File IO Functions ------------------------------------------------------------------
 
         public void SaveToFileBinary(string filepath)
         {
@@ -76,7 +67,6 @@ namespace DSAL_CA1.Classes
             {
                 BinaryFormatter bf = new BinaryFormatter();
                 Stream stream = new FileStream(filepath, FileMode.OpenOrCreate, FileAccess.Write);
-
                 bf.Serialize(stream, this);
                 stream.Close();
 
@@ -120,11 +110,12 @@ namespace DSAL_CA1.Classes
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {
             //add the required data to file
-            info.AddValue("Role", _role);
-            info.AddValue("ChildrenRoleTreeNodes", _children);
-            info.AddValue("ParentRoleTreeNode", _parentRoleTreeNode);
+            info.AddValue("Role", Role);
+            info.AddValue("ChildrenRoleTreeNodes", ChildRoleTreeNodes);
+            info.AddValue("ParentRoleTreeNode", ParentRoleTreeNode);
 
         }//end of GetObjectData [ SERIALIZE ]
+
         // [DESERIALIZE]
         protected RoleTreeNode(SerializationInfo info, StreamingContext context)
         {
