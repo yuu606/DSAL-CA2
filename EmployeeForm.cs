@@ -72,7 +72,7 @@ namespace DSAL_CA2
                 if (item.Text == "Edit Employee Details")
                 {
                     Employee employee = _selectedNode.Employee;
-                    EditEmployeeForm editEmployeeForm = new EditEmployeeForm(employee.UUID, employee.Name);
+                    EditEmployeeForm editEmployeeForm = new EditEmployeeForm();
                     editEmployeeForm.ModifyItemCallback = new EditEmployeeForm.ModifyItemDelegate(this.ModifyDetailsItemCallbackFn);
                     editEmployeeForm.ShowDialog(this);
                 }
@@ -134,19 +134,22 @@ namespace DSAL_CA2
 
         //ALL FUNCTIONS
         //------------------------------------------------------------------------------
-        private void AddItemCallbackFn(string uuid, string employeeName)
+        private void AddItemCallbackFn(string employeeName, int salary, string role)
         {
             Employee newEmployee = new Employee(employeeName);
             EmployeeTreeNode newEmployeeNode = new EmployeeTreeNode(newEmployee);
+            newEmployeeNode.Employee.Salary = salary;
+            newEmployeeNode.Employee.Role = role;
             this._selectedNode.AddChildEmployeeTreeNode(newEmployeeNode);
         }//end of AddItemCallbackFn method
 
-        private void ModifyDetailsItemCallbackFn(string uuid, string Name)
+        private void ModifyDetailsItemCallbackFn(string uuid, string employeeName, int salary)
         {
             List<EmployeeTreeNode> resultNodes = new List<EmployeeTreeNode>();
             employeeManager.EmployeeTreeStructure.SearchByUUID(uuid, ref resultNodes);
-            resultNodes[0].Employee.Name = Name;
-            resultNodes[0].Text = Name;
+            resultNodes[0].Employee.Name = employeeName;
+            resultNodes[0].Employee.Salary = salary;
+            resultNodes[0].Text = employeeName;
         }//end of ModifyItemCallbackFn method
 
         private void ModifyRROItemCallbackFn(string uuid, string role, string reportingOfficer)

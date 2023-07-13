@@ -42,7 +42,7 @@ namespace DSAL_CA2
             }
             if (name != "")
             {
-                AddItemCallback( name, projLead);
+                AddItemCallback(name, projLead);
                 this.DialogResult = DialogResult.OK;
             }
         }
