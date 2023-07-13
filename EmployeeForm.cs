@@ -34,13 +34,13 @@ namespace DSAL_CA2
             employeeManager = new DataManager();
             _selectedNode = null;
             treeViewEmployee.Nodes.Add(employeeManager.generateDefaultEmployeeTree());
-            //treeViewEmployee.AfterSelect += roleNodeTreeView_Click;
-            //InitializeMenuTreeView();
+            treeViewEmployee.AfterSelect += employeeNodeTreeView_Click;
+            InitializeMenuTreeView();
         }
 
         public void InitializeMenuTreeView()
         {
-            // Create the ContextMenuStrip.
+            // Create the ContextMenuStrip
             _employeeMenu = new ContextMenuStrip();
             _removeMenuItem.Text = "Remove Employee";
             _addMenuItem.Text = "Add Employee";
@@ -49,17 +49,19 @@ namespace DSAL_CA2
             _editEmployeeDetails.Text = "Edit Employee Details";
             _editRoleReportOff.Text = "Edit Role/Reporting Officer";
 
+            //add submenu items to update menu item
             _updateMenuItem.DropDownItems.Add(_editEmployeeDetails);
             _updateMenuItem.DropDownItems.Add(_editRoleReportOff);
 
+            //add event handlers
             _employeeMenu.ItemClicked += new ToolStripItemClickedEventHandler(contextMenu_ItemClicked);
             _employeeMenu.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenu_Opening);
 
+            //add all tool strip menu items 
             _employeeMenu.Items.AddRange(new ToolStripMenuItem[] { _removeMenuItem, _addMenuItem, _updateMenuItem });
             this.treeViewEmployee.ContextMenuStrip = _employeeMenu;
         }
 
-        //TO EDIT**
         public void contextMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             ToolStripItem item = e.ClickedItem;
@@ -89,7 +91,7 @@ namespace DSAL_CA2
                     swapEmployeeForm.SwapItemCallback = new SwapEmployeeForm.SwapItemDelegate(this.SwapItemCallbackFn);
                     swapEmployeeForm.ShowDialog(this);
                 }
-                if (item.Text == "Add Role")
+                if (item.Text == "Add Employee")
                 {
                     //MessageBox.Show("No modal form created to service the add role operation.");
                     Employee employee = _selectedNode.Employee;
@@ -97,7 +99,7 @@ namespace DSAL_CA2
                     addEmployeeForm.AddItemCallback = new AddEmployeeForm.AddItemDelegate(this.AddItemCallbackFn);
                     addEmployeeForm.ShowDialog(this);
                 }
-                if (item.Text == "Remove Role")
+                if (item.Text == "Remove Employee")
                 {
                     MessageBox.Show("No modal form created to service the remove operation.");
                 }
@@ -132,6 +134,13 @@ namespace DSAL_CA2
 
         //ALL FUNCTIONS
         //------------------------------------------------------------------------------
+        private void AddItemCallbackFn(string uuid, string employeeName)
+        {
+            Employee newEmployee = new Employee(employeeName);
+            EmployeeTreeNode newEmployeeNode = new EmployeeTreeNode(newEmployee);
+            this._selectedNode.AddChildEmployeeTreeNode(newEmployeeNode);
+        }//end of AddItemCallbackFn method
+
         private void ModifyDetailsItemCallbackFn(string uuid, string Name)
         {
             List<EmployeeTreeNode> resultNodes = new List<EmployeeTreeNode>();
@@ -148,47 +157,66 @@ namespace DSAL_CA2
             resultNodes[0].Employee.ReportingOfficer = reportingOfficer;
         }
 
-        private void AddItemCallbackFn(string uuid, string employeeName)
-        {
-            Employee newEmployee = new Employee(employeeName);
-            EmployeeTreeNode newEmployeeNode = new EmployeeTreeNode(newEmployee);
-            this._selectedNode.AddChildEmployeeTreeNode(newEmployeeNode);
-        }//end of AddItemCallbackFn method
-
-        private void SwapItemCallbackFn(String uuid, string employeeName)
+        private void SwapItemCallbackFn(string uuid, string employeeName)
         {
             Employee newEmployee = new Employee(employeeName);
             EmployeeTreeNode newEmployeeNode = new EmployeeTreeNode(newEmployee);
             this._selectedNode.AddChildEmployeeTreeNode(newEmployeeNode);
         }
 
-        private void employeeNode_Click()
+        private void employeeNodeTreeView_Click(object sender, TreeViewEventArgs e)
         {
-
+            EmployeeTreeNode employeeNode = (EmployeeTreeNode)this.treeViewEmployee.SelectedNode;
+            string projStr = "";
+            if (employeeNode.Employee.Projects.Count > 1)
+            {
+                //populate project string
+                foreach (Project proj in employeeNode.Employee.Projects)
+                {
+                    projStr += proj.projName + " ";
+                }
+            }
+            else
+            {
+                projStr = employeeNode.Employee.Projects[0].projName;
+            }
+            
+            //populate read-only textboxes
+            uuidTextBox.Text = employeeNode.Employee.UUID;
+            reportingOfficerTextBox.Text = employeeNode.Employee.ReportingOfficer;
+            nameTextBox.Text = employeeNode.Employee.Name;
+            salaryTextBox.Text = employeeNode.Employee.Salary.ToString();
+            roleTextBox.Text = employeeNode.Employee.Role;
+            projectsTextBox.Text = projStr;
         }
         //--------------------------------------------------------------------------
         //END OF FUNCTIONS
 
+        //Reset button event handler 
         private void buttonReset_Click(object sender, EventArgs e)
         {
-
+            treeViewEmployee.Nodes.Clear();
         }
 
+        //Save button event handler 
         private void buttonSave_Click(object sender, EventArgs e)
         {
             employeeManager.SaveRoleData();
         }
 
+        //Load button event handler 
         private void buttonLoad_Click(object sender, EventArgs e)
         {
             employeeManager.SaveRoleData();
         }
 
+        //Expand all nodes in employee tree view event handler 
         private void buttonExpandAll_Click(object sender, EventArgs e)
         {
             treeViewEmployee.ExpandAll();
         }
 
+        //Collapse all nodes in employee tree view event handler 
         private void buttonCollapseAll_Click(object sender, EventArgs e)
         {
             treeViewEmployee.CollapseAll();

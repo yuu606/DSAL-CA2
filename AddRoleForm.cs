@@ -15,7 +15,7 @@ namespace DSAL_CA2
     public partial class AddRoleForm : Form
     {
         private Role _oneRole;
-        public delegate void AddItemDelegate(string uuid, string roleName, bool projLead);
+        public delegate void AddItemDelegate(string roleName, bool projLead);
         public AddItemDelegate AddItemCallback;
 
         public AddRoleForm()
@@ -42,7 +42,7 @@ namespace DSAL_CA2
             }
             if (name != "")
             {
-                AddItemCallback(uuid, name, projLead);
+                AddItemCallback( name, projLead);
                 this.DialogResult = DialogResult.OK;
             }
         }

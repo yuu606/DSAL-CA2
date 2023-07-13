@@ -38,11 +38,10 @@ namespace DSAL_CA2.Classes
             return EmployeeTreeStructure;
         }
 
-        /*public ProjectTreeNode generateDefaultProjectTree()
+        public void generateDefualtProjectListView()
         {
-            ProjectTreeStructure = new ProjectTreeNode(new Project("ROOT"));
-            return ProjectTreeStructure;
-        }*/
+
+        }
 
         public void SaveRoleData()
         {
@@ -67,6 +66,16 @@ namespace DSAL_CA2.Classes
             this.EmployeeTreeStructure = this.EmployeeTreeStructure.ReadFromFileBinary(_filePath);
             this.EmployeeTreeStructure.RebuildTreeNodes();
             return this.EmployeeTreeStructure;
+        }
+
+        public void SaveProjectList()
+        {
+
+        }
+
+        public void LoadProjectList()
+        {
+
         }
 
     }//end of class RoleManager

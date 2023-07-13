@@ -10,7 +10,6 @@ namespace DSAL_CA2.Classes
     [Serializable]
     internal class Project
     {
-        public ProjectTreeNode Container { get; set; }
         public string UUID { get; set; }
         public string projName { get; set; }
         public int revenue { get; set; }

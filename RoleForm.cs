@@ -110,7 +110,7 @@ namespace DSAL_CA2
             {
                 this._updateMenuItem.Visible = true;
                 this._removeMenuItem.Visible = true;
-                
+
                 if (_selectedNode.ParentRoleTreeNode.Role.isProjLead == true)
                 {
                     this._updateMenuItem.Visible = false;
@@ -133,7 +133,7 @@ namespace DSAL_CA2
 
         }//end of ModifyItemCallbackFn method
 
-        private void AddItemCallbackFn(string uuid, string roleName, bool projLead)
+        private void AddItemCallbackFn(string roleName, bool projLead)
         {
             Role newRole = new Role(roleName);
             newRole.isProjLead = projLead;
