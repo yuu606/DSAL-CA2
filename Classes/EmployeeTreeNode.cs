@@ -11,21 +11,16 @@ using System.Threading.Tasks;
 namespace DSAL_CA2.Classes
 {
     [Serializable]
-    internal class EmployeeTreeNode : TreeNode, ISerializable
+    internal class EmployeeTreeNode : GenericTreeNode<Employee>
     {
         public EmployeeTreeNode ParentEmployeeTreeNode { get; set; }
         public Employee Employee { get; set; }
         public List<EmployeeTreeNode> ChildEmployeeTreeNodes { get; set; }
 
-        public EmployeeTreeNode(Employee employee) 
+        public EmployeeTreeNode(Employee data) : base(data)
         {
-            ParentEmployeeTreeNode = null;
-            ChildEmployeeTreeNodes = new List<EmployeeTreeNode>();
-            Employee = employee;
-            this.Text = employee.Name;
+            this.Employee = data;
         }
-
-        public EmployeeTreeNode() { }
 
         public void AddChildEmployeeTreeNode(EmployeeTreeNode employeeNode)
         {
@@ -49,8 +44,7 @@ namespace DSAL_CA2.Classes
             }
 
         }//End of RebuildTreeNodes
-        // File IO Functions ------------------------------------------------------------------
-
+        
         public void SaveToFileBinary(string filepath)
         {
             try
@@ -128,11 +122,11 @@ namespace DSAL_CA2.Classes
                 for (i = 0; i < this.ChildEmployeeTreeNodes.Count; i++)
                 {
                     if (this.ChildEmployeeTreeNodes[i].Employee.UUID == uuid)
-                    { 
+                    {
                         foundNodes.Add(this.ChildEmployeeTreeNodes[i]);
                     }
                     else
-                    { 
+                    {
                         this.ChildEmployeeTreeNodes[i].SearchByUUID(uuid, ref foundNodes);
                     }
                 }

@@ -49,12 +49,8 @@ namespace DSAL_CA2
             _addMenuItem.Text = "Add Role";
             _updateMenuItem.Text = "Edit Role";
 
-            //Reference: https://stackoverflow.com/questions/5789023/how-to-respond-to-a-contextmenustrip-item-click
-            //When the menu item is clicked, need the logic inside the contextMenu_ItemClicked method to
-            //decide on operations such as make a form interface to appear for update, make a dialog interface appear to confirm delete etc.
+            
             _roleMenu.ItemClicked += new ToolStripItemClickedEventHandler(contextMenu_ItemClicked);
-            //When the menu is opening, need some logic to inspect the selected node's info so that
-            //the correct menu item is displayed or enabled. The logic is defined inside the contextMenu_Opening method
             _roleMenu.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenu_Opening);
 
             //Add the menu items to the menu.

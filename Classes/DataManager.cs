@@ -18,7 +18,7 @@ namespace DSAL_CA2.Classes
     {
         public RoleTreeNode RoleTreeStructure { get; set; }
         public EmployeeTreeNode EmployeeTreeStructure { get; set; }
-        public List<Project> ProjectTreeStructure { get; set; }   
+        public List<Project> ProjectList { get; set; }   
         private string _filePath; // Saved data file path
 
         public DataManager()
@@ -38,7 +38,7 @@ namespace DSAL_CA2.Classes
             return EmployeeTreeStructure;
         }
 
-        public void generateDefualtProjectListView()
+        public void generateDefaultProjectListView()
         {
 
         }

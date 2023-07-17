@@ -7,38 +7,41 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+#pragma warning disable SYSLIB0011
 
 namespace DSAL_CA2.Classes
 {
     [Serializable]
-    internal class TreeNode<T> : TreeNode
+    internal class GenericTreeNode<T> : TreeNode
     {
-        public TreeNode<T> ParentTreeNode { get; set; }
+        public GenericTreeNode<T> ParentTreeNode { get; set; }
         public T data { get; set; }
-        public List<TreeNode<T>> ChildTreeNodes { get; set; }
+        public List<GenericTreeNode<T>> ChildTreeNodes { get; set; }
 
-        public TreeNode(T data)
+        public GenericTreeNode(T data)
         {
             this.data = data;
-            this.ParentTreeNode = new TreeNode<T>(data);
-            this.ChildTreeNodes = new List<TreeNode<T>>();
+            this.ParentTreeNode = new GenericTreeNode<T>(data);
+            this.ChildTreeNodes = new List<GenericTreeNode<T>>();
         }
 
-        public void AddChildTreeNode(TreeNode<T> Node)
+        public GenericTreeNode() { }
+
+        public void AddChildTreeNode(GenericTreeNode<T> Node)
         {
             Node.ParentTreeNode = this;
             ChildTreeNodes.Add(Node);
             this.Nodes.Add(Node);
         } // End of AddChildRoleTreeNode method
 
-        public Queue<TreeNode<T>> LevelOrderTraversal(TreeNode<T> root, int level)
+        public Queue<GenericTreeNode<T>> LevelOrderTraversal(GenericTreeNode<T> root, int level)
         {
             if (root == null)
                 return null;
 
             // Standard level order traversal code
             // using queue
-            Queue<TreeNode<T>> q = new Queue<TreeNode<T>>(); // Create a queue
+            Queue<GenericTreeNode<T>> q = new Queue<GenericTreeNode<T>>(); // Create a queue
             q.Enqueue(root); // Enqueue root
             int k = 0;
             while (q.Count != 0)
@@ -50,7 +53,7 @@ namespace DSAL_CA2.Classes
                 {
                     // Dequeue an item from queue
                     // and print it
-                    TreeNode<T> p = q.Peek();
+                    GenericTreeNode<T> p = q.Peek();
                     q.Dequeue();
                     Console.Write(p.data + " ");
 
@@ -87,16 +90,16 @@ namespace DSAL_CA2.Classes
             }
         } //End of SaveToFileBinary
 
-        public TreeNode<T> ReadFromFileBinary(string filepath)
+        public GenericTreeNode<T> ReadFromFileBinary(string filepath)
         {
             try
             {
                 Stream stream = new FileStream(@filepath, FileMode.OpenOrCreate, FileAccess.Read);
                 BinaryFormatter bf = new BinaryFormatter();
-                TreeNode<T> root = null;
+                GenericTreeNode<T> root = null;
                 if (stream.Length != 0)
                 {
-                    root = (TreeNode<T>)bf.Deserialize(stream);
+                    root = (GenericTreeNode<T>)bf.Deserialize(stream);
                 }
 
                 stream.Close();
@@ -114,6 +117,5 @@ namespace DSAL_CA2.Classes
                 return null;
             }
         }//end of ReadFromFileBinary
-
     }
 }
