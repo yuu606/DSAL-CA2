@@ -30,11 +30,11 @@ namespace DSAL_CA2
 
         private void ProjectForm_Load(object sender, EventArgs e)
         {
-            projectManager = new DataManager();
-            projectManager.LoadEmployeeData();
-            this.treeViewEmployee.Nodes.Clear();
-            this.treeViewEmployee.Nodes.Add(projectManager.EmployeeTreeStructure);
-            this.treeViewEmployee.ExpandAll();
+            //projectManager = new DataManager();
+            //projectManager.LoadEmployeeData();
+            //this.treeViewEmployee.Nodes.Clear();
+            //this.treeViewEmployee.Nodes.Add(projectManager.EmployeeTreeStructure);
+            //this.treeViewEmployee.ExpandAll();
 
             modeComboBox.Items.Add("View");
             modeComboBox.Items.Add("Edit");
