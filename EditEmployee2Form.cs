@@ -34,7 +34,7 @@ namespace DSAL_CA2
             isDummyData.Click += isDummyData_Click;
             dataManager = new DataManager();
             _roleTreeStructure = dataManager.LoadRoleData();
-            Queue<RoleTreeNode> q = _roleTreeStructure.LevelOrderTraversal(_roleTreeStructure, level);
+            Queue<RoleTreeNode> q = _roleTreeStructure.SearchByLevelOrderTraversal(_roleTreeStructure, level);
 
             this.reportingOfficerComboBox.Text = selectedNode.Text;
             this.uuidTextBox.Text = selectedNode.Employee.UUID;

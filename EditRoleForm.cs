@@ -13,8 +13,7 @@ namespace DSAL_CA2
 {
     public partial class EditRoleForm : Form
     {
-        private Role _oneRole;
-        public delegate void ModifyItemDelegate(string uuid, string roleName);
+        public delegate void ModifyItemDelegate(string uuid, string roleName, bool isProjLead);
         public ModifyItemDelegate ModifyItemCallback;
 
         public EditRoleForm()
@@ -22,19 +21,18 @@ namespace DSAL_CA2
             InitializeComponent();
         }
 
-        public EditRoleForm(string uuid, string roleName)
+        public EditRoleForm(string uuid, bool isProjLead)
         {
             InitializeComponent();
-            this._oneRole = new Role();
-            this._oneRole.Name = roleName;
-            this._oneRole.UUID = uuid;
+            this.UUIDtextBox.Text = uuid;
+            this.projLeadCheckBox.Checked = isProjLead;
         }
 
         private void EditRoleForm_Load(object sender, EventArgs e)
         {
-            this.UUIDtextBox.Text = this._oneRole.UUID.ToString();
             TreeNode selectedNode = ((RoleForm)Owner.ActiveMdiChild).treeViewRole.SelectedNode;
-            this.parentRoleTextBox.Text = selectedNode.Text;
+            this.parentRoleTextBox.Text = selectedNode.Parent.Text;
+            this.nameTextBox.Text = selectedNode.Text;
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
@@ -53,7 +51,7 @@ namespace DSAL_CA2
             }
             if (name != "")
             {
-                ModifyItemCallback(uuid, name);
+                ModifyItemCallback(uuid, name, projLead);
                 this.DialogResult = DialogResult.OK;
 
             }

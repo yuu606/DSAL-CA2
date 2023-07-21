@@ -17,12 +17,15 @@ namespace DSAL_CA2.Classes
         public string ReportingOfficer { get; set; }
         public string Name { get; set; }
         public int Salary { get; set; }
-        public string Role { get; set; }
+        public Role role { get; set; }
         public List<Project> Projects { get; set; }
+        public bool isDummyData { get; set; }
+        public bool isSalaryAcc { get; set; }
 
-        public Employee(string name) 
+        public Employee(string name)
         {
             UUID = General.GenerateUUID();
+            Projects = new List<Project>();
             Name = name;
         }
 

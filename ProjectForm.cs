@@ -43,22 +43,12 @@ namespace DSAL_CA2
 
             this.projectListView.View = View.Details;
 
-            //instantiate list view headers 
-            ColumnHeader h1, h2, h3, h4;
-            h1 = new ColumnHeader();
-            h2 = new ColumnHeader();
-            h3 = new ColumnHeader();
-            h4 = new ColumnHeader();
-            h1.Text = "UUID";
-            h2.Text = "Project Name";
-            h3.Text = "Revenue ";
-            h4.Text = "Team Leader";
-
             //add list view headers 
-            projectListView.Columns.Add(h1);
-            projectListView.Columns.Add(h2);
-            projectListView.Columns.Add(h3);
-            projectListView.Columns.Add(h4);
+            List<ColumnHeader> chs = projectManager.generateDefaultProjectListView();
+            foreach (ColumnHeader ch in chs)
+            {
+                projectListView.Columns.Add(ch);
+            }
         }
 
 

@@ -42,9 +42,10 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            label1.Location = new Point(266, 28);
+            label1.Location = new Point(186, 17);
+            label1.Margin = new Padding(2, 0, 2, 0);
             label1.Name = "label1";
-            label1.Size = new Size(95, 25);
+            label1.Size = new Size(60, 15);
             label1.TabIndex = 0;
             label1.Text = "Add Role ";
             // 
@@ -52,9 +53,10 @@
             // 
             label2.AutoSize = true;
             label2.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            label2.Location = new Point(33, 78);
+            label2.Location = new Point(23, 47);
+            label2.Margin = new Padding(2, 0, 2, 0);
             label2.Name = "label2";
-            label2.Size = new Size(111, 25);
+            label2.Size = new Size(72, 15);
             label2.TabIndex = 1;
             label2.Text = "Parent Role";
             // 
@@ -62,9 +64,10 @@
             // 
             label3.AutoSize = true;
             label3.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            label3.Location = new Point(33, 145);
+            label3.Location = new Point(23, 87);
+            label3.Margin = new Padding(2, 0, 2, 0);
             label3.Name = "label3";
-            label3.Size = new Size(62, 25);
+            label3.Size = new Size(40, 15);
             label3.TabIndex = 2;
             label3.Text = "Name";
             // 
@@ -73,9 +76,10 @@
             addButton.BackColor = Color.DarkGreen;
             addButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
             addButton.ForeColor = SystemColors.ButtonHighlight;
-            addButton.Location = new Point(40, 270);
+            addButton.Location = new Point(28, 162);
+            addButton.Margin = new Padding(2, 2, 2, 2);
             addButton.Name = "addButton";
-            addButton.Size = new Size(269, 34);
+            addButton.Size = new Size(188, 39);
             addButton.TabIndex = 3;
             addButton.Text = "Add";
             addButton.UseVisualStyleBackColor = false;
@@ -86,9 +90,10 @@
             cancelButton.BackColor = Color.Firebrick;
             cancelButton.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
             cancelButton.ForeColor = SystemColors.ButtonHighlight;
-            cancelButton.Location = new Point(347, 270);
+            cancelButton.Location = new Point(243, 162);
+            cancelButton.Margin = new Padding(2, 2, 2, 2);
             cancelButton.Name = "cancelButton";
-            cancelButton.Size = new Size(261, 34);
+            cancelButton.Size = new Size(183, 39);
             cancelButton.TabIndex = 4;
             cancelButton.Text = "Cancel";
             cancelButton.UseVisualStyleBackColor = false;
@@ -97,9 +102,10 @@
             // projLeadCheckBox
             // 
             projLeadCheckBox.AutoSize = true;
-            projLeadCheckBox.Location = new Point(40, 197);
+            projLeadCheckBox.Location = new Point(28, 118);
+            projLeadCheckBox.Margin = new Padding(2, 2, 2, 2);
             projLeadCheckBox.Name = "projLeadCheckBox";
-            projLeadCheckBox.Size = new Size(196, 29);
+            projLeadCheckBox.Size = new Size(132, 19);
             projLeadCheckBox.TabIndex = 5;
             projLeadCheckBox.Text = "Project Leader Role?";
             projLeadCheckBox.UseVisualStyleBackColor = true;
@@ -107,23 +113,25 @@
             // parentRoleTextBox
             // 
             parentRoleTextBox.Enabled = false;
-            parentRoleTextBox.Location = new Point(235, 77);
+            parentRoleTextBox.Location = new Point(164, 46);
+            parentRoleTextBox.Margin = new Padding(2, 2, 2, 2);
             parentRoleTextBox.Name = "parentRoleTextBox";
-            parentRoleTextBox.Size = new Size(373, 31);
+            parentRoleTextBox.Size = new Size(262, 23);
             parentRoleTextBox.TabIndex = 6;
             // 
             // nameTextBox
             // 
-            nameTextBox.Location = new Point(235, 139);
+            nameTextBox.Location = new Point(164, 83);
+            nameTextBox.Margin = new Padding(2, 2, 2, 2);
             nameTextBox.Name = "nameTextBox";
-            nameTextBox.Size = new Size(373, 31);
+            nameTextBox.Size = new Size(262, 23);
             nameTextBox.TabIndex = 7;
             // 
             // AddRoleForm
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(639, 327);
+            ClientSize = new Size(447, 212);
             Controls.Add(nameTextBox);
             Controls.Add(parentRoleTextBox);
             Controls.Add(projLeadCheckBox);
@@ -132,6 +140,7 @@
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
+            Margin = new Padding(2, 2, 2, 2);
             MdiChildrenMinimizedAnchorBottom = false;
             Name = "AddRoleForm";
             Text = "AddRoleForm";

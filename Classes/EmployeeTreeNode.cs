@@ -11,22 +11,39 @@ using System.Threading.Tasks;
 namespace DSAL_CA2.Classes
 {
     [Serializable]
-    internal class EmployeeTreeNode : GenericTreeNode<Employee>
+    internal class EmployeeTreeNode : GenericTreeNode<Employee>, ISerializable
     {
         public EmployeeTreeNode ParentEmployeeTreeNode { get; set; }
         public Employee Employee { get; set; }
         public List<EmployeeTreeNode> ChildEmployeeTreeNodes { get; set; }
+        public bool IsLeaf { get; set; }
+        public bool IsRoot { get; set; }
 
         public EmployeeTreeNode(Employee data) : base(data)
         {
+            ParentEmployeeTreeNode = null;
+            ChildEmployeeTreeNodes = new List<EmployeeTreeNode>();
             this.Employee = data;
+            Employee.Container = this;
+            this.Text = data.Name + " - " + data.role + " (S$" + data.Salary + ")";
         }
+
+        public EmployeeTreeNode() { }
 
         public void AddChildEmployeeTreeNode(EmployeeTreeNode employeeNode)
         {
             employeeNode.ParentEmployeeTreeNode = this;
             ChildEmployeeTreeNodes.Add(employeeNode);
             this.Nodes.Add(employeeNode);
+        }
+
+        public void DeleteNode(EmployeeTreeNode parentNode, EmployeeTreeNode nodeToDelete)
+        {
+            if (parentNode == null || nodeToDelete == null)
+            {
+                return;
+            }
+            parentNode.ChildEmployeeTreeNodes.Remove(nodeToDelete);
         }
 
         public void RebuildTreeNodes()
@@ -132,5 +149,24 @@ namespace DSAL_CA2.Classes
                 }
             }
         }//End of SearchByUUID method
+
+        public void SearchByEmployeeName(string employeeName, ref List<EmployeeTreeNode> foundNodes)
+        {
+            if (this.ChildEmployeeTreeNodes.Count > 0)
+            {
+                int i = 0;
+                for (i = 0; i < this.ChildEmployeeTreeNodes.Count; i++)
+                {
+                    if (this.ChildEmployeeTreeNodes[i].Employee.Name == employeeName)
+                    {
+                        foundNodes.Add(this.ChildEmployeeTreeNodes[i]);
+                    }
+                    else
+                    {
+                        this.ChildEmployeeTreeNodes[i].SearchByEmployeeName(employeeName, ref foundNodes);
+                    }
+                }
+            }
+        }// end of SearchByEmployeeName
     }
 }

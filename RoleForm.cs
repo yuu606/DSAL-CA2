@@ -22,6 +22,7 @@ namespace DSAL_CA2
         public EditRoleForm editRoleForm;
         DataManager roleManager;
         RoleTreeNode _selectedNode;
+        RoleTreeNode _roleTreeStructure;
         private ContextMenuStrip _roleMenu;
         ToolStripMenuItem _removeMenuItem = new ToolStripMenuItem();
         ToolStripMenuItem _addMenuItem = new ToolStripMenuItem();
@@ -34,9 +35,20 @@ namespace DSAL_CA2
 
         private void RoleForm_Load(object sender, EventArgs e)
         {
+            textBoxConsole.Text = "Roles cannot be added if there are projects assigned." + Environment.NewLine
+                + "Roles cannot be removed if there are employees under it." + Environment.NewLine
+                + "Only one level of role is allowed under a project leader role.";
             roleManager = new DataManager();
             _selectedNode = null;
-            treeViewRole.Nodes.Add(roleManager.generateDefaultRoleTree());
+            _roleTreeStructure = roleManager.LoadRoleData();
+            if (_roleTreeStructure == null)
+            {
+                treeViewRole.Nodes.Add(roleManager.generateDefaultRoleTree());
+            }
+            else
+            {
+                treeViewRole.Nodes.Add(_roleTreeStructure);
+            }
             treeViewRole.AfterSelect += roleNodeTreeView_Click;
             InitializeMenuTreeView();
         }
@@ -49,7 +61,7 @@ namespace DSAL_CA2
             _addMenuItem.Text = "Add Role";
             _updateMenuItem.Text = "Edit Role";
 
-            
+
             _roleMenu.ItemClicked += new ToolStripItemClickedEventHandler(contextMenu_ItemClicked);
             _roleMenu.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenu_Opening);
 
@@ -65,24 +77,26 @@ namespace DSAL_CA2
             if ((item != null) && (_selectedNode != null))
             {
                 if (item.Text == "Edit Role")
-                {   /**** A sample code which is frequently used to get a parent form work with a child form ****/
+                {
                     Role role = _selectedNode.Role;
-                    //fur stands for form update role (ran out of naming ideas)
-                    EditRoleForm editRoleForm = new EditRoleForm(role.UUID, role.Name);
+                    EditRoleForm editRoleForm = new EditRoleForm(role.UUID, role.isProjLead);
                     editRoleForm.ModifyItemCallback = new EditRoleForm.ModifyItemDelegate(this.ModifyItemCallbackFn);
                     editRoleForm.ShowDialog(this);
                 }
                 if (item.Text == "Add Role")
                 {
-                    //MessageBox.Show("No modal form created to service the add role operation.");
                     Role role = _selectedNode.Role;
+                    // if (rolenode info is being used by projects form) { Message.Show(""); }
                     AddRoleForm addRoleForm = new AddRoleForm();
                     addRoleForm.AddItemCallback = new AddRoleForm.AddItemDelegate(this.AddItemCallbackFn);
                     addRoleForm.ShowDialog(this);
                 }
                 if (item.Text == "Remove Role")
                 {
-                    MessageBox.Show("No modal form created to service the remove operation.");
+                    //if (rolenode info is being used by employee node) { Message.Show("Unable to delete selected role. There are currently employees under the selected role"); }
+                    MessageBox.Show("Are you sure you want to delete the role? Child roles will also be deleted.");
+                    roleManager.RoleTreeStructure.DeleteNode(_selectedNode.ParentRoleTreeNode, _selectedNode);
+                    treeViewRole.Nodes.Remove(_selectedNode);
                 }
             }
 
@@ -101,22 +115,24 @@ namespace DSAL_CA2
             {
                 this._updateMenuItem.Visible = false;
                 this._removeMenuItem.Visible = false;
+                this._addMenuItem.Visible = true;
             }
             if (_selectedNode.Text != "ROOT")
             {
                 this._updateMenuItem.Visible = true;
                 this._removeMenuItem.Visible = true;
+                this._addMenuItem.Visible = true;
 
                 if (_selectedNode.ParentRoleTreeNode.Role.isProjLead == true)
                 {
-                    this._updateMenuItem.Visible = false;
-                    this._removeMenuItem.Visible = false;
+                    this._updateMenuItem.Visible = true;
+                    this._removeMenuItem.Visible = true;
                     this._addMenuItem.Visible = false;
                 }
             }
         }
 
-        private void ModifyItemCallbackFn(string uuid, string roleName)
+        private void ModifyItemCallbackFn(string uuid, string roleName, bool isProjLead)
         {
             List<RoleTreeNode> resultNodes = new List<RoleTreeNode>();
             //Find the RoleTreeNode object which has the role object containing the matching
@@ -126,7 +142,13 @@ namespace DSAL_CA2
             //I directly point to the first element inside the List to access the Role object's Name and Text property data.
             resultNodes[0].Role.Name = roleName;
             resultNodes[0].Text = roleName;
-
+            resultNodes[0].Role.isProjLead = isProjLead;
+            if (isProjLead == true)
+            {
+                resultNodes[0].IsLeaf = true;
+            }
+            textBoxConsole.Text = "Role Edited:" + Environment.NewLine + " Name:" + roleName;
+            roleManager.SaveRoleData();
         }//end of ModifyItemCallbackFn method
 
         private void AddItemCallbackFn(string roleName, bool projLead)
@@ -136,11 +158,14 @@ namespace DSAL_CA2
             RoleTreeNode newNode = new RoleTreeNode(newRole);
             this._selectedNode.AddChildRoleTreeNode(newNode);
             treeViewRole.ExpandAll();
+            textBoxConsole.Text = "Role Added:" + Environment.NewLine + " Name:" + roleName;
+            roleManager.SaveRoleData();
         }//end of AddItemCallbackFn method
 
         private void buttonReset_Click(object sender, EventArgs e)
         {
             this.treeViewRole.Nodes.Clear();
+            this.treeViewRole.Nodes.Add(roleManager.generateDefaultRoleTree());
             MessageBox.Show("Hierarchy simulation has been reset");
         }
 
@@ -152,10 +177,17 @@ namespace DSAL_CA2
 
         private void buttonLoad_Click(object sender, EventArgs e)
         {
-            roleManager.LoadRoleData();
-            this.treeViewRole.Nodes.Clear();
-            this.treeViewRole.Nodes.Add(roleManager.RoleTreeStructure);
-            this.treeViewRole.ExpandAll();
+            _roleTreeStructure = roleManager.LoadRoleData();
+            if (_roleTreeStructure == null)
+            {
+                MessageBox.Show("You have not saved any progress");
+            }
+            else
+            {
+                this.treeViewRole.Nodes.Clear();
+                this.treeViewRole.Nodes.Add(_roleTreeStructure);
+                this.treeViewRole.ExpandAll();
+            }
         }
 
         private void buttonExpandAll_Click(object sender, EventArgs e)
@@ -173,6 +205,7 @@ namespace DSAL_CA2
             RoleTreeNode roleNode = (RoleTreeNode)this.treeViewRole.SelectedNode;
             uuidTextBox.Text = roleNode.Role.UUID.ToString();
             nameTextBox.Text = roleNode.Role.Name.ToString();
+            projLeadCheckBox.Checked = roleNode.Role.isProjLead;
         }
     }
 }

@@ -48,9 +48,10 @@
             // menuStrip1
             // 
             menuStrip1.ImageScalingSize = new Size(24, 24);
-            menuStrip1.Location = new Point(0, 33);
+            menuStrip1.Location = new Point(0, 24);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(1513, 24);
+            menuStrip1.Padding = new Padding(4, 1, 0, 1);
+            menuStrip1.Size = new Size(1384, 24);
             menuStrip1.TabIndex = 1;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -60,7 +61,8 @@
             menuStrip2.Items.AddRange(new ToolStripItem[] { formsToolStripMenuItem });
             menuStrip2.Location = new Point(0, 0);
             menuStrip2.Name = "menuStrip2";
-            menuStrip2.Size = new Size(1513, 33);
+            menuStrip2.Padding = new Padding(4, 1, 0, 1);
+            menuStrip2.Size = new Size(1384, 24);
             menuStrip2.TabIndex = 2;
             menuStrip2.Text = "menuStrip2";
             // 
@@ -68,36 +70,37 @@
             // 
             formsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { roleToolStripMenuItem, employeeToolStripMenuItem, projectToolStripMenuItem });
             formsToolStripMenuItem.Name = "formsToolStripMenuItem";
-            formsToolStripMenuItem.Size = new Size(78, 29);
+            formsToolStripMenuItem.Size = new Size(52, 22);
             formsToolStripMenuItem.Text = "Forms";
             // 
             // roleToolStripMenuItem
             // 
             roleToolStripMenuItem.Name = "roleToolStripMenuItem";
-            roleToolStripMenuItem.Size = new Size(192, 34);
+            roleToolStripMenuItem.Size = new Size(180, 22);
             roleToolStripMenuItem.Text = "Role";
             // 
             // employeeToolStripMenuItem
             // 
             employeeToolStripMenuItem.Name = "employeeToolStripMenuItem";
-            employeeToolStripMenuItem.Size = new Size(192, 34);
+            employeeToolStripMenuItem.Size = new Size(180, 22);
             employeeToolStripMenuItem.Text = "Employee";
             // 
             // projectToolStripMenuItem
             // 
             projectToolStripMenuItem.Name = "projectToolStripMenuItem";
-            projectToolStripMenuItem.Size = new Size(192, 34);
+            projectToolStripMenuItem.Size = new Size(180, 22);
             projectToolStripMenuItem.Text = "Project";
             // 
             // ParentForm
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1513, 856);
+            ClientSize = new Size(1384, 761);
             Controls.Add(menuStrip1);
             Controls.Add(menuStrip2);
             IsMdiContainer = true;
             MainMenuStrip = menuStrip1;
+            Margin = new Padding(2, 2, 2, 2);
             Name = "ParentForm";
             Text = "ParentForm";
             Load += ParentForm_Load;

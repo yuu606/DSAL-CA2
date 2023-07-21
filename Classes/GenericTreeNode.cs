@@ -12,7 +12,7 @@ using System.Xml.Linq;
 namespace DSAL_CA2.Classes
 {
     [Serializable]
-    internal class GenericTreeNode<T> : TreeNode
+    public abstract class GenericTreeNode<T> : TreeNode
     {
         public GenericTreeNode<T> ParentTreeNode { get; set; }
         public T data { get; set; }
@@ -21,7 +21,7 @@ namespace DSAL_CA2.Classes
         public GenericTreeNode(T data)
         {
             this.data = data;
-            this.ParentTreeNode = new GenericTreeNode<T>(data);
+            this.ParentTreeNode = null;
             this.ChildTreeNodes = new List<GenericTreeNode<T>>();
         }
 
@@ -33,6 +33,21 @@ namespace DSAL_CA2.Classes
             ChildTreeNodes.Add(Node);
             this.Nodes.Add(Node);
         } // End of AddChildRoleTreeNode method
+
+        public void RebuildTreeNodes()
+        {
+            if (this.ChildTreeNodes.Count > 0)
+            {
+                int i = 0;
+                for (i = 0; i < this.ChildTreeNodes.Count; i++)
+                {
+                    this.Nodes.Add(this.ChildTreeNodes[i]);
+                    this.ChildTreeNodes[i].ParentTreeNode = this;
+                    this.ChildTreeNodes[i].RebuildTreeNodes();
+                }
+            }
+
+        }//End of RebuildTreeNodes
 
         public Queue<GenericTreeNode<T>> LevelOrderTraversal(GenericTreeNode<T> root, int level)
         {
@@ -117,5 +132,10 @@ namespace DSAL_CA2.Classes
                 return null;
             }
         }//end of ReadFromFileBinary
+
+        public virtual void GetTreeNodeData(SerializationInfo info, StreamingContext context)
+        {
+            info.AddValue("data", data);
+        }
     }
 }

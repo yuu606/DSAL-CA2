@@ -13,22 +13,24 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 namespace DSAL_CA1.Classes
 {
     [Serializable]
-    internal class RoleTreeNode : TreeNode, ISerializable
+    internal class RoleTreeNode : GenericTreeNode<Role>, ISerializable
     {
         
-        //variable getters and setters 
+        //getters and setters 
         public RoleTreeNode ParentRoleTreeNode { get; set; }
         public Role Role { get; set; }
         public List<RoleTreeNode> ChildRoleTreeNodes { get; set; }
+        public bool IsLeaf { get; set; }
+        public bool IsRoot { get; set; }
 
         //Two constructors
-        public RoleTreeNode(Role role)
+        public RoleTreeNode(Role data): base (data)
         {
             ParentRoleTreeNode = null;
             ChildRoleTreeNodes = new List<RoleTreeNode>();
-            Role = role;
+            Role = data;
             Role.Container = this;
-            this.Text = role.Name;
+            this.Text = data.Name;
         } // end of constructor
         public RoleTreeNode() { } // End of constructor
         //End of two constructors
@@ -40,10 +42,15 @@ namespace DSAL_CA1.Classes
             this.Nodes.Add(roleNode);
         } // End of AddChildRoleTreeNode method
 
-        /* When you work on File IO operations, TreeNode class is [not serializable]                      */
-        /* As a result the following three methods were defined to support the                              */
-        /* reconstruction of all the TreeNode objects within each RoleTreeNode type objects     */
-        /* Each developer usually has their own technique to reconstruct the TreeNode objects*/
+        public void DeleteNode(RoleTreeNode parentNode, RoleTreeNode nodeToDelete)
+        {
+            if (parentNode == null || nodeToDelete == null)
+            {
+                return;
+            }
+            parentNode.ChildRoleTreeNodes.Remove(nodeToDelete);
+        }
+
         public void RebuildTreeNodes()
         {
             this.Text = this.Role.Name;
@@ -67,6 +74,7 @@ namespace DSAL_CA1.Classes
             {
                 BinaryFormatter bf = new BinaryFormatter();
                 Stream stream = new FileStream(filepath, FileMode.OpenOrCreate, FileAccess.Write);
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
                 bf.Serialize(stream, this);
                 stream.Close();
 
@@ -131,50 +139,61 @@ namespace DSAL_CA1.Classes
 
         public void SearchByUUID(string uuid, ref List<RoleTreeNode> foundNodes)
         {
-            if (this.ChildRoleTreeNodes.Count > 0)//Note: This if block may not be necessary at all. Though the logic works.
+            if (this.ChildRoleTreeNodes.Count > 0)
             {
                 int i = 0;
                 for (i = 0; i < this.ChildRoleTreeNodes.Count; i++)
                 {
                     if (this.ChildRoleTreeNodes[i].Role.UUID == uuid)
-                    {  //Base case (Where the method code stops calling itself, 
-                       //perform action and finally exit). This avoids infinite loop
-
+                    { 
                         foundNodes.Add(this.ChildRoleTreeNodes[i]);
                     }
                     else
-                    { //Recursive case (where the method calls itself)
-                      //Each DepartmentNode type object has SearchDeleteById method
+                    {
                         this.ChildRoleTreeNodes[i].SearchByUUID(uuid, ref foundNodes);
                     }
                 }
             }
         }//End of SearchByUUID method
 
-        public Queue<RoleTreeNode> LevelOrderTraversal(RoleTreeNode root, int level)
+        public void SearchByRoleName(string roleName, ref List<RoleTreeNode> foundNodes)
+        {
+            if (this.ChildRoleTreeNodes.Count > 0)
+            {
+                int i = 0;
+                for (i = 0; i < this.ChildRoleTreeNodes.Count; i++)
+                {
+                    if (this.ChildRoleTreeNodes[i].Role.Name == roleName)
+                    {
+                        foundNodes.Add(this.ChildRoleTreeNodes[i]);
+                    }
+                    else
+                    {
+                        this.ChildRoleTreeNodes[i].SearchByRoleName(roleName, ref foundNodes);
+                    }
+                }
+            }
+        }
+
+
+        public Queue<RoleTreeNode> SearchByLevelOrderTraversal(RoleTreeNode root, int level)
         {
             if (root == null)
                 return null;
 
-            // Standard level order traversal code
-            // using queue
-            Queue<RoleTreeNode> q = new Queue<RoleTreeNode>(); // Create a queue
-            q.Enqueue(root); // Enqueue root
+            
+            Queue<RoleTreeNode> q = new Queue<RoleTreeNode>();
+            q.Enqueue(root); 
             int k = 0;
             while (q.Count != 0)
             {
                 int n = q.Count;
 
-                // If this node has children
                 while (n > 0)
                 {
-                    // Dequeue an item from queue
-                    // and print it
                     RoleTreeNode p = q.Peek();
                     q.Dequeue();
 
-                    // Enqueue all children of
-                    // the dequeued item
                     for (int i = 0; i < p.ChildRoleTreeNodes.Count; i++)
                         q.Enqueue(p.ChildRoleTreeNodes[i]);
                     n--;

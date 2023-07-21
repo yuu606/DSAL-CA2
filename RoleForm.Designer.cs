@@ -40,7 +40,7 @@
             panel1 = new Panel();
             nameTextBox = new TextBox();
             uuidTextBox = new TextBox();
-            checkBox1 = new CheckBox();
+            projLeadCheckBox = new CheckBox();
             label6 = new Label();
             label4 = new Label();
             label3 = new Label();
@@ -166,7 +166,7 @@
             panel1.BorderStyle = BorderStyle.FixedSingle;
             panel1.Controls.Add(nameTextBox);
             panel1.Controls.Add(uuidTextBox);
-            panel1.Controls.Add(checkBox1);
+            panel1.Controls.Add(projLeadCheckBox);
             panel1.Controls.Add(label6);
             panel1.Controls.Add(label4);
             panel1.Controls.Add(label3);
@@ -197,17 +197,17 @@
             uuidTextBox.Size = new Size(169, 23);
             uuidTextBox.TabIndex = 6;
             // 
-            // checkBox1
+            // projLeadCheckBox
             // 
-            checkBox1.AutoSize = true;
-            checkBox1.Enabled = false;
-            checkBox1.Location = new Point(15, 95);
-            checkBox1.Margin = new Padding(2);
-            checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(132, 19);
-            checkBox1.TabIndex = 5;
-            checkBox1.Text = "Project Leader Role?";
-            checkBox1.UseVisualStyleBackColor = true;
+            projLeadCheckBox.AutoSize = true;
+            projLeadCheckBox.Enabled = false;
+            projLeadCheckBox.Location = new Point(15, 95);
+            projLeadCheckBox.Margin = new Padding(2);
+            projLeadCheckBox.Name = "projLeadCheckBox";
+            projLeadCheckBox.Size = new Size(132, 19);
+            projLeadCheckBox.TabIndex = 5;
+            projLeadCheckBox.Text = "Project Leader Role?";
+            projLeadCheckBox.UseVisualStyleBackColor = true;
             // 
             // label6
             // 
@@ -302,7 +302,7 @@
         private Panel panel1;
         private TextBox nameTextBox;
         private TextBox uuidTextBox;
-        private CheckBox checkBox1;
+        private CheckBox projLeadCheckBox;
         private Label label6;
         private Label label4;
         private Label label3;
