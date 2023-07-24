@@ -21,6 +21,7 @@ namespace DSAL_CA2
         public AddRoleForm addRoleForm;
         public EditRoleForm editRoleForm;
         DataManager roleManager;
+        private Data data;
         RoleTreeNode _selectedNode;
         RoleTreeNode _roleTreeStructure;
         private ContextMenuStrip _roleMenu;
@@ -35,11 +36,16 @@ namespace DSAL_CA2
 
         private void RoleForm_Load(object sender, EventArgs e)
         {
+            data = new Data();
+            _selectedNode = null;
             textBoxConsole.Text = "Roles cannot be added if there are projects assigned." + Environment.NewLine
                 + "Roles cannot be removed if there are employees under it." + Environment.NewLine
                 + "Only one level of role is allowed under a project leader role.";
-            roleManager = new DataManager();
-            _selectedNode = null;
+
+            roleManager = new DataManager(data);
+            data.RoleTreeStructure = new();
+
+            _roleTreeStructure = data.RoleTreeStructure;
             _roleTreeStructure = roleManager.LoadRoleData();
             if (_roleTreeStructure == null)
             {
@@ -171,7 +177,7 @@ namespace DSAL_CA2
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            roleManager.SaveRoleData();
+            roleManager.saveData();
             MessageBox.Show("Hierarchy simulation has been successfully saved");
         }
 

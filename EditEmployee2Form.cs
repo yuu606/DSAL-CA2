@@ -19,6 +19,7 @@ namespace DSAL_CA2
         private Employee _oneEmployee;
         public delegate void ModifyItem2Delegate(string uuid, string role, string reportingOfficer);
         public ModifyItem2Delegate ModifyItem2Callback;
+        private Data data;
 
         public EditEmployee2Form()
         {
@@ -29,10 +30,13 @@ namespace DSAL_CA2
 
         private void EditEmployee2Form_Load(object sender, EventArgs e)
         {
+            isDummyData.Click += isDummyData_Click;
+
             EmployeeTreeNode selectedNode = (EmployeeTreeNode)((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.SelectedNode;
             int level = selectedNode.Level;
-            isDummyData.Click += isDummyData_Click;
-            dataManager = new DataManager();
+
+            data = new Data();
+            dataManager = new DataManager(data);
             _roleTreeStructure = dataManager.LoadRoleData();
             Queue<RoleTreeNode> q = _roleTreeStructure.SearchByLevelOrderTraversal(_roleTreeStructure, level);
 

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace DSAL_CA2.Classes
 {
     [Serializable]
-    internal class Project
+    public class Project
     {
         public string UUID { get; set; }
         public string projName { get; set; }

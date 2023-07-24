@@ -9,6 +9,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DSAL_CA1.Classes;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace DSAL_CA2
@@ -16,11 +17,17 @@ namespace DSAL_CA2
     public partial class ProjectForm : Form
     {
         DataManager projectManager;
+        Data data;
+        RoleTreeNode _roleTreeStructure;
+        EmployeeTreeNode _employeeTreeStructure;
+        List<Project> _projectList;
+        private EmployeeTreeNode _employeeTreeNode;
         private bool handle = true;
         private List<TreeNode> CurrentNodeMatches = new List<TreeNode>();
         private int LastNodeIndex = 0;
         private string LastSearchText;
         private string _foundTeam;
+        
 
 
         public ProjectForm()
@@ -30,11 +37,16 @@ namespace DSAL_CA2
 
         private void ProjectForm_Load(object sender, EventArgs e)
         {
-            //projectManager = new DataManager();
-            //projectManager.LoadEmployeeData();
-            //this.treeViewEmployee.Nodes.Clear();
-            //this.treeViewEmployee.Nodes.Add(projectManager.EmployeeTreeStructure);
-            //this.treeViewEmployee.ExpandAll();
+            data = new Data();
+            projectManager = new DataManager(data);
+
+            data.RoleTreeStructure = new();
+            _roleTreeStructure = data.RoleTreeStructure;
+            _roleTreeStructure = projectManager.LoadRoleData();
+
+            this.treeViewEmployee.Nodes.Clear();
+            this.treeViewEmployee.Nodes.Add(projectManager.EmployeeTreeStructure);
+            this.treeViewEmployee.ExpandAll();
 
             modeComboBox.Items.Add("View");
             modeComboBox.Items.Add("Edit");

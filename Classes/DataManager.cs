@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
@@ -20,12 +21,13 @@ namespace DSAL_CA2.Classes
         public RoleTreeNode RoleTreeStructure { get; set; }
         public EmployeeTreeNode EmployeeTreeStructure { get; set; }
         public List<Project> ProjectList { get; set; }   
+
+        private Data _data;
         private string _filePath; // Saved data file path
 
-        public DataManager()
+        public DataManager(Data data)
         {
-            RoleTreeStructure = new RoleTreeNode();
-            EmployeeTreeStructure = new EmployeeTreeNode();
+            _data = data;
             _filePath = System.IO.Path.GetDirectoryName(Application.ExecutablePath) + "\\Data.dat";
         }
 
@@ -38,18 +40,18 @@ namespace DSAL_CA2.Classes
         }
         public void SaveRoleData()
         {
-            this.RoleTreeStructure.SaveToFileBinary(_filePath);
+            _data.RoleTreeStructure.SaveToFileBinary(_filePath);
         }//end of SaveRoleData
 
         public RoleTreeNode LoadRoleData()
         {
-            this.RoleTreeStructure = this.RoleTreeStructure.ReadFromFileBinary(_filePath);
-            if (this.RoleTreeStructure == null)
+            _data.RoleTreeStructure = _data.RoleTreeStructure.ReadFromFileBinary(_filePath);
+            if (_data.RoleTreeStructure == null)
             {
                 return null;
             }
-            this.RoleTreeStructure.RebuildTreeNodes();
-            return this.RoleTreeStructure;
+            _data.RoleTreeStructure.RebuildTreeNodes();
+            return _data.RoleTreeStructure;
 
         } //end of LoadRoleData method
         //--------------------------------------------------------------------------------------------
@@ -59,9 +61,9 @@ namespace DSAL_CA2.Classes
         public EmployeeTreeNode generateDefaultEmployeeTree()
         {
             Employee newEmployee = new Employee("ROOT");
-            
-            EmployeeTreeStructure = new EmployeeTreeNode(newEmployee);
-            return EmployeeTreeStructure;
+            newEmployee.role = RoleTreeStructure.Role;
+            _data.EmployeeTreeStructure = new EmployeeTreeNode(newEmployee);
+            return _data.EmployeeTreeStructure;
         }
 
         public void SaveEmployeeData()
@@ -136,5 +138,48 @@ namespace DSAL_CA2.Classes
         } 
         //--------------------------------------------------------------------------------------------
 
+        public void saveData()
+        {
+            try
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                Stream stream = new FileStream(_filePath, FileMode.OpenOrCreate, FileAccess.Write);
+                bf.Serialize(stream, this._data);
+                stream.Close();
+
+                MessageBox.Show("Data is added to file");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        public Data ReadFromFile()
+        {
+            try
+            {
+                Stream stream = new FileStream(_filePath, FileMode.OpenOrCreate, FileAccess.Read);
+                BinaryFormatter bf = new BinaryFormatter();
+                
+                if (stream.Length != 0)
+                {
+                    _data = (Data)bf.Deserialize(stream);
+                }
+                stream.Close();
+
+                return _data;
+            }
+            catch (FileNotFoundException ex)
+            {
+                MessageBox.Show("Unable to find file.");
+                return null;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
     }//end of class RoleManager
 }

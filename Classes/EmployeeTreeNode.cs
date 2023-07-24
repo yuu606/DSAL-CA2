@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace DSAL_CA2.Classes
 {
     [Serializable]
-    internal class EmployeeTreeNode : GenericTreeNode<Employee>, ISerializable
+    public class EmployeeTreeNode : GenericTreeNode<Employee>, ISerializable
     {
         public EmployeeTreeNode ParentEmployeeTreeNode { get; set; }
         public Employee Employee { get; set; }
@@ -25,7 +25,7 @@ namespace DSAL_CA2.Classes
             ChildEmployeeTreeNodes = new List<EmployeeTreeNode>();
             this.Employee = data;
             Employee.Container = this;
-            this.Text = data.Name + " - " + data.role + " (S$" + data.Salary + ")";
+            this.Text = data.Name + " - " + data.role.Name + " (S$" + data.Salary + ")";
         }
 
         public EmployeeTreeNode() { }

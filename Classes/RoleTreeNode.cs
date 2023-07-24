@@ -13,7 +13,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.ListView;
 namespace DSAL_CA1.Classes
 {
     [Serializable]
-    internal class RoleTreeNode : GenericTreeNode<Role>, ISerializable
+    public class RoleTreeNode : GenericTreeNode<Role>, ISerializable
     {
         
         //getters and setters 

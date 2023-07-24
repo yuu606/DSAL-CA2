@@ -14,15 +14,12 @@ namespace DSAL_CA2
 {
     public partial class AddRoleForm : Form
     {
-        private Role _oneRole;
         public delegate void AddItemDelegate(string roleName, bool projLead);
         public AddItemDelegate AddItemCallback;
 
         public AddRoleForm()
         {
             InitializeComponent();
-            this._oneRole = new Role();
-            _oneRole.UUID = General.GenerateUUID();
         }
 
         private void AddRoleForm_Load(object sender, EventArgs e)
@@ -34,7 +31,6 @@ namespace DSAL_CA2
         private void addButton_Click(object sender, EventArgs e)
         {
             string name = nameTextBox.Text.Trim();
-            string uuid = parentRoleTextBox.Text.Trim();
             bool projLead = false;
             if (projLeadCheckBox.Checked == true)
             {

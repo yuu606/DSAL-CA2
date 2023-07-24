@@ -10,7 +10,7 @@ using System.Xml.Linq;
 namespace DSAL_CA2.Classes
 {
     [Serializable]
-    internal class Employee
+    public class Employee
     {
         public EmployeeTreeNode Container { get; set; }
         public string UUID { get; set; }
@@ -26,7 +26,10 @@ namespace DSAL_CA2.Classes
         {
             UUID = General.GenerateUUID();
             Projects = new List<Project>();
+            role = new Role();
             Name = name;
+            isDummyData = false;
+            isSalaryAcc = true;
         }
 
         public Employee() { }

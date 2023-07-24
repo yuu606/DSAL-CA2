@@ -17,22 +17,24 @@ namespace DSAL_CA2
         private DataManager dataManager;
         private Employee _oneEmployee;
         private RoleTreeNode _roleTreeStructure;
-        public delegate void AddItemDelegate(string employeeName, int salary, string role);
+        public delegate void AddItemDelegate(string employeeName, int salary, string role, String reportingOfficer);
         public AddItemDelegate AddItemCallback;
+        public Data data;
 
         public AddEmployeeForm()
         {
             InitializeComponent();
-            _oneEmployee = new Employee();
-            _oneEmployee.UUID = General.GenerateUUID();
         }
 
         private void AddEmployeeForm_Load(object sender, EventArgs e)
         {
-            TreeNode selectedNode = ((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.SelectedNode;
-            int level = selectedNode.Level;
             isDummyData.Click += isDummyData_Click;
-            dataManager = new DataManager();
+
+            TreeNode selectedNode = ((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.SelectedNode;
+            int level = selectedNode.Level + 1;
+
+            data = new Data();
+            dataManager = new DataManager(data);
             _roleTreeStructure = dataManager.LoadRoleData();
             Queue<RoleTreeNode> q = _roleTreeStructure.SearchByLevelOrderTraversal(_roleTreeStructure, level);
 
@@ -47,7 +49,8 @@ namespace DSAL_CA2
         {
             string employeeName = nameTextBox.Text.Trim();
             int salary = int.Parse(salaryTextBox.Text.Trim());
-            string role = roleComboBox.SelectedText.Trim();
+            string role = roleComboBox.SelectedItem.ToString();
+            string reportingOfficer = reportingOfficerTextBox.Text.Trim();
 
             if (salary < 0)
             {
@@ -63,7 +66,7 @@ namespace DSAL_CA2
             }
             if (employeeName != "")
             {
-                AddItemCallback(employeeName, salary, role);
+                AddItemCallback(employeeName, salary, role, reportingOfficer);
                 this.DialogResult = DialogResult.OK;
             }
         }

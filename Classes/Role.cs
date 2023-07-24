@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace DSAL_CA2.Classes
 {
     [Serializable]
-    internal class Role
+    public class Role
     {
         public RoleTreeNode Container { get; set; }
         public string UUID { get; set; }

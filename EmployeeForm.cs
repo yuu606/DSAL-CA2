@@ -17,6 +17,8 @@ namespace DSAL_CA2
     {
         DataManager employeeManager;
         EmployeeTreeNode _selectedNode;
+        RoleTreeNode _roleTreeStructure;
+        private EmployeeTreeNode _employeeTreeStructure;
         private ContextMenuStrip _employeeMenu;
         ToolStripMenuItem _removeMenuItem = new ToolStripMenuItem();
         ToolStripMenuItem _addMenuItem = new ToolStripMenuItem();
@@ -24,6 +26,7 @@ namespace DSAL_CA2
         ToolStripMenuItem _swapMenuItem = new ToolStripMenuItem();
         ToolStripMenuItem _editEmployeeDetails = new ToolStripMenuItem();
         ToolStripMenuItem _editRoleReportOff = new ToolStripMenuItem();
+        private Data data;
 
         public EmployeeForm() 
         {
@@ -32,14 +35,30 @@ namespace DSAL_CA2
 
         private void EmployeeForm_Load(object sender, EventArgs e)
         {
-            employeeManager = new DataManager();
-            _selectedNode = null;
-            treeViewEmployee.Nodes.Add(employeeManager.generateDefaultEmployeeTree());
-            treeViewEmployee.AfterSelect += employeeNodeTreeView_Click;
-            if (employeeManager.LoadRoleData() == null)
+            data = new Data();
+            employeeManager = new DataManager(data);
+
+            data.RoleTreeStructure = new();
+            data.EmployeeTreeStructure = new();
+
+            _roleTreeStructure = data.RoleTreeStructure;
+            _roleTreeStructure = employeeManager.LoadRoleData();
+
+            _employeeTreeStructure = data.EmployeeTreeStructure;
+            _employeeTreeStructure = employeeManager.LoadEmployeeData();
+
+            if (_employeeTreeStructure == null)
+            {
+                _employeeTreeStructure = employeeManager.generateDefaultEmployeeTree();
+                treeViewEmployee.Nodes.Add(_employeeTreeStructure);
+            }
+            
+            if (_roleTreeStructure == null)
             {
                 MessageBox.Show("Please set up the role hierarchy before setting up the Employee hierarchy");
             }
+
+            treeViewEmployee.AfterSelect += employeeNodeTreeView_Click;
             InitializeMenuTreeView();
         }
 
@@ -64,7 +83,7 @@ namespace DSAL_CA2
             _employeeMenu.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenu_Opening);
 
             //add all tool strip menu items 
-            _employeeMenu.Items.AddRange(new ToolStripMenuItem[] { _removeMenuItem, _addMenuItem, _updateMenuItem });
+            _employeeMenu.Items.AddRange(new ToolStripMenuItem[] { _removeMenuItem, _addMenuItem, _updateMenuItem, _swapMenuItem });
             this.treeViewEmployee.ContextMenuStrip = _employeeMenu;
         }
 
@@ -99,7 +118,6 @@ namespace DSAL_CA2
                 }
                 if (item.Text == "Add Employee")
                 {
-                    Employee employee = _selectedNode.Employee;
                     AddEmployeeForm addEmployeeForm = new AddEmployeeForm();
                     addEmployeeForm.AddItemCallback = new AddEmployeeForm.AddItemDelegate(this.AddItemCallbackFn);
                     addEmployeeForm.ShowDialog(this);
@@ -124,14 +142,14 @@ namespace DSAL_CA2
                 item.Enabled = true;
             }
 
-            if (_selectedNode.Text == "ROOT")
+            if (_selectedNode.Text.Contains("ROOT") == true)
             {
                 this._updateMenuItem.Visible = false;
                 this._removeMenuItem.Visible = false;
-                this._swapMenuItem.Visible = false;
+                this._swapMenuItem.Visible = true;
                 this._addMenuItem.Visible = true;
             }
-            if (_selectedNode.Text != "ROOT")
+            else 
             {
                 if (_selectedNode.IsLeaf)
                 {
@@ -179,16 +197,25 @@ namespace DSAL_CA2
 
         //ALL FUNCTIONS
         //------------------------------------------------------------------------------
-        private void AddItemCallbackFn(string employeeName, int salary, string role)
+        private void AddItemCallbackFn(string employeeName, int salary, string role, String reportingOfficer)
         {
-            Employee newEmployee = new Employee(employeeName);
+            //search for role via name
             List<RoleTreeNode> roleNodes = new List<RoleTreeNode>();
-            EmployeeTreeNode newEmployeeNode = new EmployeeTreeNode(newEmployee);
             employeeManager.RoleTreeStructure.SearchByRoleName(role, ref roleNodes);
-            newEmployeeNode.Employee.Salary = salary;
-            newEmployeeNode.Employee.role = roleNodes[0].Role;
+
+            //instantiate new employee object
+            Employee newEmployee = new Employee(employeeName);
+            newEmployee.Salary = salary;
+            newEmployee.role = roleNodes[0].Role;
+            newEmployee.ReportingOfficer = reportingOfficer;
+
+            //instantiate new employee tree node
+            EmployeeTreeNode newEmployeeNode = new EmployeeTreeNode(newEmployee);
             this._selectedNode.AddChildEmployeeTreeNode(newEmployeeNode);
+
+            //save to data file
             employeeManager.SaveEmployeeData();
+            //expand tree view
             treeViewEmployee.ExpandAll();
         }//end of AddItemCallbackFn method
 
@@ -231,7 +258,7 @@ namespace DSAL_CA2
             string projStr = "No Projects";
 
             //check whether employee has projects assigned 
-            if (employeeNode.Employee.Projects != null)
+            if (employeeNode.Employee.Projects.Count> 0)
             {
                 if (employeeNode.Employee.Projects.Count > 1)
                 {
@@ -271,7 +298,7 @@ namespace DSAL_CA2
             nameTextBox.Text = employeeNode.Employee.Name;
             roleTextBox.Text = employeeNode.Employee.role.Name;
             projectsTextBox.Text = projStr;
-            if (employeeNode.Text == "ROOT")
+            if (employeeNode.Text.Contains("ROOT") == true)
             {
                 String na = "N.A.";
                 reportingOfficerTextBox.Text = na;
