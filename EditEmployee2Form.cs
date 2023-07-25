@@ -16,7 +16,6 @@ namespace DSAL_CA2
     {
         private DataManager dataManager;
         private RoleTreeNode _roleTreeStructure;
-        private Employee _oneEmployee;
         public delegate void ModifyItem2Delegate(string uuid, string role, string reportingOfficer);
         public ModifyItem2Delegate ModifyItem2Callback;
         private Data data;
@@ -24,13 +23,11 @@ namespace DSAL_CA2
         public EditEmployee2Form()
         {
             InitializeComponent();
-            this._oneEmployee = new Employee();
-            this._oneEmployee.Name = Name;
         }
 
         private void EditEmployee2Form_Load(object sender, EventArgs e)
         {
-            isDummyData.Click += isDummyData_Click;
+            isDummyDataCheckBox.Click += isDummyData_Click;
 
             EmployeeTreeNode selectedNode = (EmployeeTreeNode)((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.SelectedNode;
             int level = selectedNode.Level;
@@ -40,6 +37,8 @@ namespace DSAL_CA2
             _roleTreeStructure = dataManager.LoadRoleData();
             Queue<RoleTreeNode> q = _roleTreeStructure.SearchByLevelOrderTraversal(_roleTreeStructure, level);
 
+            this.isAccCheckBox.Checked = selectedNode.Employee.isSalaryAcc;
+            this.isDummyDataCheckBox.Checked = selectedNode.Employee.isDummyData;
             this.reportingOfficerComboBox.Text = selectedNode.Text;
             this.uuidTextBox.Text = selectedNode.Employee.UUID;
             foreach (RoleTreeNode node in q)

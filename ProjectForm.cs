@@ -44,8 +44,14 @@ namespace DSAL_CA2
             _roleTreeStructure = data.RoleTreeStructure;
             _roleTreeStructure = projectManager.LoadRoleData();
 
+            _employeeTreeStructure = data.EmployeeTreeStructure;
+            _employeeTreeStructure = projectManager.LoadEmployeeData();
+
+            _projectList = data.ProjectList;
+            _projectList = projectManager.LoadProjectList();
+
             this.treeViewEmployee.Nodes.Clear();
-            this.treeViewEmployee.Nodes.Add(projectManager.EmployeeTreeStructure);
+            this.treeViewEmployee.Nodes.Add(_employeeTreeStructure);
             this.treeViewEmployee.ExpandAll();
 
             modeComboBox.Items.Add("View");
@@ -192,7 +198,7 @@ namespace DSAL_CA2
         {
             Project proj = (Project)projectListView.SelectedItems[0].Tag;
             projectListView.SelectedItems.Clear();
-            projectManager.ProjectList.Remove(proj);
+            _projectList.Remove(proj);
             MessageBox.Show("Project has been deleted");
         }
 

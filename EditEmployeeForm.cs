@@ -18,7 +18,7 @@ namespace DSAL_CA2
     {
         private DataManager dataManager;
         private RoleTreeNode _roleTreeStructure;
-        public delegate void ModifyItemDelegate(string uuid, string employeeName, int salary);
+        public delegate void ModifyItemDelegate(string uuid, string employeeName, int salary, bool isSalaryAcc, bool isDummyDataValue);
         public ModifyItemDelegate ModifyItemCallback;
         private Data data;
 
@@ -49,22 +49,27 @@ namespace DSAL_CA2
             string employeeName = nameTextBox.Text.Trim();
             int salary = int.Parse(salaryTextBox.Text.Trim());
             string uuid = uuidTextBox.Text.Trim();
+            bool isSalaryAcc = true;
+            bool isDummyDataValue = false;
 
             if (salary < 0)
             {
                 MessageBox.Show("Employee salary must not be less than 0. Please enter a valid employee salary");
             }
 
-            if (isDummyData.Checked == true)
+            if (isAccCheckBox.Checked == false)
             {
-                if (isAccCheckBox.Checked == true)
-                {
-
-                }
+                isSalaryAcc = false;
             }
+
+            if (isDummyDataValue)
+            {
+                isDummyDataValue = true;
+            }
+
             if (employeeName != "")
             {
-                ModifyItemCallback(uuid, employeeName, salary);
+                ModifyItemCallback(uuid, employeeName, salary, isSalaryAcc, isDummyDataValue);
                 this.DialogResult = DialogResult.OK;
             }
         }

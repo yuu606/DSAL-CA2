@@ -68,52 +68,6 @@ namespace DSAL_CA1.Classes
         }//End of RebuildTreeNodes
         // File IO Functions ------------------------------------------------------------------
 
-        public void SaveToFileBinary(string filepath)
-        {
-            try
-            {
-                BinaryFormatter bf = new BinaryFormatter();
-                Stream stream = new FileStream(filepath, FileMode.OpenOrCreate, FileAccess.Write);
-                SaveFileDialog saveFileDialog = new SaveFileDialog();
-                bf.Serialize(stream, this);
-                stream.Close();
-
-                MessageBox.Show("Data is added to file");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        } //End of SaveToFileBinary
-
-        public RoleTreeNode ReadFromFileBinary(string filepath)
-        {
-            try
-            {
-                Stream stream = new FileStream(@filepath, FileMode.OpenOrCreate, FileAccess.Read);
-                BinaryFormatter bf = new BinaryFormatter();
-                RoleTreeNode root = null;
-                if (stream.Length != 0)
-                {
-                    root = (RoleTreeNode)bf.Deserialize(stream);
-                }
-                stream.Close();
-
-                return root;
-            }
-            catch (FileNotFoundException ex)
-            {
-                MessageBox.Show("Unable to find file.");
-                return null;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                return null;
-            }
-
-        }//end of ReadFromFileBinary
-
         // [ SERIALIZE ]
         public void GetObjectData(SerializationInfo info, StreamingContext context)
         {

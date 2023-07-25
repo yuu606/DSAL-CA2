@@ -18,9 +18,9 @@ namespace DSAL_CA2.Classes
     //in this DataManager instead of having seperate RoleManager, EmployeeManager and ProjectManager class
     //****************************************************************************************
     {
-        public RoleTreeNode RoleTreeStructure { get; set; }
-        public EmployeeTreeNode EmployeeTreeStructure { get; set; }
-        public List<Project> ProjectList { get; set; }   
+        //public RoleTreeNode RoleTreeStructure { get; set; }
+        //public EmployeeTreeNode EmployeeTreeStructure { get; set; }
+        //public List<Project> ProjectList { get; set; }   
 
         private Data _data;
         private string _filePath; // Saved data file path
@@ -35,24 +35,25 @@ namespace DSAL_CA2.Classes
         //--------------------------------------------------------------------------------------------
         public RoleTreeNode generateDefaultRoleTree()
         {
-            RoleTreeStructure = new RoleTreeNode(new Role("ROOT"));
-            return RoleTreeStructure;   
+            _data.RoleTreeStructure = new RoleTreeNode(new Role("ROOT"));
+            return _data.RoleTreeStructure;   
         }
         public void SaveRoleData()
         {
-            _data.RoleTreeStructure.SaveToFileBinary(_filePath);
+            _data.ProjectList = null;
+            _data.EmployeeTreeStructure = null;
+            saveData();
         }//end of SaveRoleData
 
         public RoleTreeNode LoadRoleData()
         {
-            _data.RoleTreeStructure = _data.RoleTreeStructure.ReadFromFileBinary(_filePath);
+            _data = ReadFromFile();
             if (_data.RoleTreeStructure == null)
             {
                 return null;
             }
             _data.RoleTreeStructure.RebuildTreeNodes();
             return _data.RoleTreeStructure;
-
         } //end of LoadRoleData method
         //--------------------------------------------------------------------------------------------
 
@@ -61,24 +62,32 @@ namespace DSAL_CA2.Classes
         public EmployeeTreeNode generateDefaultEmployeeTree()
         {
             Employee newEmployee = new Employee("ROOT");
-            newEmployee.role = RoleTreeStructure.Role;
+            newEmployee.role = _data.RoleTreeStructure.Role;
             _data.EmployeeTreeStructure = new EmployeeTreeNode(newEmployee);
             return _data.EmployeeTreeStructure;
         }
 
         public void SaveEmployeeData()
         {
-            this.EmployeeTreeStructure.SaveToFileBinary(_filePath);
+            _data.ProjectList = null;
+            _data.RoleTreeStructure = null;
+            saveData();
         }
 
         public EmployeeTreeNode LoadEmployeeData()
         {
-            this.EmployeeTreeStructure = this.EmployeeTreeStructure.ReadFromFileBinary(_filePath);
-            this.EmployeeTreeStructure.RebuildTreeNodes();
-            return this.EmployeeTreeStructure;
+            _data = ReadFromFile();
+            if (_data.EmployeeTreeStructure == null)
+            {
+                return null;
+            }
+            _data.EmployeeTreeStructure.RebuildTreeNodes();
+            return _data.EmployeeTreeStructure;
         }
         //--------------------------------------------------------------------------------------------
 
+        //Manage project data methods 
+        //--------------------------------------------------------------------------------------------
         public List<ColumnHeader> generateDefaultProjectListView()
         {
             List<string> headers = new List<string>(){"UUID", "Project Name", "Revenue", "Team Leader"};
@@ -91,50 +100,17 @@ namespace DSAL_CA2.Classes
             return chs;
         }
 
-        //Manage project data methods 
-        //--------------------------------------------------------------------------------------------
         public void SaveProjectList()
         {
-            try
-            {
-                BinaryFormatter bf = new BinaryFormatter();
-                Stream stream = new FileStream(_filePath, FileMode.OpenOrCreate, FileAccess.Write);
-                bf.Serialize(stream, this.ProjectList);
-                stream.Close();
-
-                MessageBox.Show("Data is added to file");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            _data.RoleTreeStructure = null;
+            _data.EmployeeTreeStructure = null;
+            saveData();
         }
 
         public List<Project> LoadProjectList()
         {
-            try
-            {
-                Stream stream = new FileStream(_filePath, FileMode.OpenOrCreate, FileAccess.Read);
-                BinaryFormatter bf = new BinaryFormatter();
-                List<Project> projectList = null;
-                if (stream.Length != 0)
-                {
-                    projectList = (List<Project>)bf.Deserialize(stream);
-                }
-                stream.Close();
-
-                return projectList;
-            }
-            catch (FileNotFoundException ex)
-            {
-                MessageBox.Show("Unable to find file.");
-                return null;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-                return null;
-            }
+            _data = ReadFromFile();
+            return _data.ProjectList;
         } 
         //--------------------------------------------------------------------------------------------
 
