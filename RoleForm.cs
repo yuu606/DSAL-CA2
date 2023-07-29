@@ -167,7 +167,7 @@ namespace DSAL_CA2
             resultNodes[0].Role.isProjLead = isProjLead; //set updated isProjLead bool
             if (isProjLead == true)
             {
-                resultNodes[0].IsLeaf = true; //set updated isLead bool
+                resultNodes[0].IsLeaf = true; //set updated isLeaf bool
             }
             textBoxConsole.Text = "Role Edited:" + Environment.NewLine + " Name:" + roleName; //update console text
             roleManager.SaveRoleData(); //save role data 

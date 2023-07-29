@@ -7,6 +7,7 @@ using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace DSAL_CA2.Classes
 {
@@ -16,6 +17,9 @@ namespace DSAL_CA2.Classes
         public EmployeeTreeNode ParentEmployeeTreeNode { get; set; }
         public Employee Employee { get; set; }
         public List<EmployeeTreeNode> ChildEmployeeTreeNodes { get; set; }
+        public int localIndex { get; set; }
+        public Role localRole { get; set; }
+        public Employee localRO { get; set; }
         public bool IsLeaf { get; set; }
         public bool IsRoot { get; set; }
 
@@ -25,7 +29,21 @@ namespace DSAL_CA2.Classes
             ChildEmployeeTreeNodes = new List<EmployeeTreeNode>();
             this.Employee = data;
             Employee.Container = this;
-            this.Text = data.Name + " - " + data.role.Name + " (S$" + data.Salary + ")";
+            localIndex = 0;
+            localRole = data.roleList[localIndex];
+            localRO = null;
+            string roleText = "";
+            int i = 0;
+            foreach (Role role in data.roleList)
+            {
+                roleText += role.Name;
+                if (i == 1)
+                {
+                    roleText +=  ", " + role.Name;
+                }
+                i++;
+            }
+            this.Text = data.Name + " - " + roleText + " (S$" + data.Salary + ")";
         }
 
         public EmployeeTreeNode() { }
@@ -44,6 +62,63 @@ namespace DSAL_CA2.Classes
                 return;
             }
             parentNode.ChildEmployeeTreeNodes.Remove(nodeToDelete);
+        }
+
+        public void SwapNodes(EmployeeTreeNode node1, EmployeeTreeNode node2)
+        {
+            if (node1 != null && node2 != null && node1 != node2)
+            {
+                EmployeeTreeNode parent1 = node1.ParentEmployeeTreeNode;
+                EmployeeTreeNode parent2 = node2.ParentEmployeeTreeNode;
+
+                if (parent1 != null && parent2 != null)
+                {
+                    int index1 = parent1.ChildEmployeeTreeNodes.IndexOf(node1);
+                    int index2 = parent2.ChildEmployeeTreeNodes.IndexOf(node2);
+
+                    parent1.ChildEmployeeTreeNodes[index1] = node2;
+                    parent2.ChildEmployeeTreeNodes[index2] = node1;
+                }
+            }
+        }
+
+        public Queue<EmployeeTreeNode> SearchByLevelOrderTraversal(EmployeeTreeNode root, int level)
+        {
+            if (root == null)
+                return null;
+
+            // Standard level order traversal code
+            // using queue
+            Queue<EmployeeTreeNode> q = new Queue<EmployeeTreeNode>(); // Create a queue
+            q.Enqueue(root); // Enqueue root
+            int k = 0;
+            while (q.Count != 0)
+            {
+                int n = q.Count;
+
+                // If this node has children
+                while (n > 0)
+                {
+                    // Dequeue an item from queue
+                    // and print it
+                    EmployeeTreeNode p = q.Peek();
+                    q.Dequeue();
+                    Console.Write(p.data + " ");
+
+                    // Enqueue all children of
+                    // the dequeued item
+                    for (int i = 0; i < p.ChildTreeNodes.Count; i++)
+                        q.Enqueue(p.ChildEmployeeTreeNodes[i]);
+                    n--;
+                }
+
+                k++;
+                if (k == level)
+                {
+                    return q;
+                }
+            }
+            return null;
         }
 
         public void RebuildTreeNodes()
@@ -123,5 +198,23 @@ namespace DSAL_CA2.Classes
                 }
             }
         }// end of SearchByEmployeeName
+
+        public void PreOrderTraversal(Action<Employee> action)
+        {
+            PreOrderTraversalRecursive(this, action);
+        }
+
+        private void PreOrderTraversalRecursive(EmployeeTreeNode node, Action<Employee> action)
+        {
+            if (node == null)
+                return;
+
+            action(node.Employee);
+
+            foreach (var child in node.ChildEmployeeTreeNodes)
+            {
+                PreOrderTraversalRecursive(child, action);
+            }
+        }
     }
 }

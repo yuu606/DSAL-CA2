@@ -24,8 +24,13 @@ namespace DSAL_CA2
 
         private void AddRoleForm_Load(object sender, EventArgs e)
         {
-            TreeNode selectedNode = ((RoleForm)Owner.ActiveMdiChild).treeViewRole.SelectedNode;
+            RoleTreeNode selectedNode = (RoleTreeNode)((RoleForm)Owner.ActiveMdiChild).treeViewRole.SelectedNode;
             this.parentRoleTextBox.Text = selectedNode.Text;
+            if (selectedNode.Role.isProjLead == true)
+            {
+                projLeadCheckBox.Enabled = false;
+            }
+            
         }
 
         private void addButton_Click(object sender, EventArgs e)

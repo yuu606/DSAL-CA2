@@ -16,6 +16,7 @@ namespace DSAL_CA2
     {
         private DataManager dataManager;
         private RoleTreeNode _roleTreeStructure;
+        private EmployeeTreeNode _employeeTreeStructure;
         public delegate void ModifyItem2Delegate(string uuid, string role, string reportingOfficer);
         public ModifyItem2Delegate ModifyItem2Callback;
         private Data data;
@@ -27,29 +28,51 @@ namespace DSAL_CA2
 
         private void EditEmployee2Form_Load(object sender, EventArgs e)
         {
-            isDummyDataCheckBox.Click += isDummyData_Click;
+            //add event handler
+            roleComboBox.SelectedValueChanged += role_AfterSelect;
 
+            //get selectednode 
             EmployeeTreeNode selectedNode = (EmployeeTreeNode)((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.SelectedNode;
             int level = selectedNode.Level;
 
+            //load role tree structure 
             data = new Data();
             dataManager = new DataManager(data);
             _roleTreeStructure = dataManager.LoadRoleData();
             Queue<RoleTreeNode> q = _roleTreeStructure.SearchByLevelOrderTraversal(_roleTreeStructure, level);
 
+            //get local index of selected node 
+            int localIndex = selectedNode.localIndex;
+
+            //populate textboxes
+            this.uuidTextBox.Text = selectedNode.Employee.UUID;
             this.isAccCheckBox.Checked = selectedNode.Employee.isSalaryAcc;
             this.isDummyDataCheckBox.Checked = selectedNode.Employee.isDummyData;
-            this.reportingOfficerComboBox.Text = selectedNode.Text;
-            this.uuidTextBox.Text = selectedNode.Employee.UUID;
+            this.reportingOfficerComboBox.SelectedText = selectedNode.localRO.Name;
+            this.roleComboBox.SelectedText = selectedNode.localRole.Name;
+
+            //populate role combobox options
             foreach (RoleTreeNode node in q)
             {
                 roleComboBox.Items.Add(node.Role.Name);
             }
+
+            //load employee tree structure 
+            _employeeTreeStructure = dataManager.LoadEmployeeData();
         }
 
         private void editButton_Click(object sender, EventArgs e)
         {
+            //get final value inputs  
+            string uuid = uuidTextBox.Text.Trim();
+            string role = roleComboBox.SelectedText;
+            string reportingOfficer = reportingOfficerComboBox.SelectedText;
 
+            if (uuid != "")
+            {
+                ModifyItem2Callback(uuid, role, reportingOfficer);
+                this.DialogResult = DialogResult.OK;
+            }
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
@@ -57,13 +80,24 @@ namespace DSAL_CA2
             this.DialogResult = DialogResult.Cancel;
         }
 
-        private void isDummyData_Click(object sender, EventArgs e)
+        private void role_AfterSelect(object sender, EventArgs e)
         {
-            nameTextBox.Text = "Dummy";
-            nameTextBox.BackColor = uuidTextBox.BackColor;
-            isAccCheckBox.Enabled = true;
+            //empty reporting officer text
+            reportingOfficerComboBox.SelectedText = "";
+            string roleName = roleComboBox.SelectedItem.ToString(); //get selected role name
+
+            List<RoleTreeNode> foundNodes = new List<RoleTreeNode>(); 
+            _roleTreeStructure.SearchByRoleName(roleName, ref foundNodes); //find role node via rolename
+            RoleTreeNode roleNode = foundNodes[0];
+
+            int level = roleNode.Level + 1; //get parent node's level
+            Queue<EmployeeTreeNode> q = _employeeTreeStructure.SearchByLevelOrderTraversal(_employeeTreeStructure, level); //find all employee nodes on that level
+
+            while (q.Count > 0)
+            {
+                EmployeeTreeNode node = q.Dequeue(); //get employee node
+                reportingOfficerComboBox.Items.Add(node.Employee.Name); //populate reporting officer combobox
+            }
         }
     }
-
-
 }

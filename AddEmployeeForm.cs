@@ -17,7 +17,7 @@ namespace DSAL_CA2
         private DataManager dataManager;
         private Employee _oneEmployee;
         private RoleTreeNode _roleTreeStructure;
-        public delegate void AddItemDelegate(string employeeName, int salary, string role, String reportingOfficer);
+        public delegate void AddItemDelegate(string employeeName, int salary, string role, String reportingOfficer, bool isDummyDataValue, bool isSalaryAcc);
         public AddItemDelegate AddItemCallback;
         public Data data;
 
@@ -30,15 +30,16 @@ namespace DSAL_CA2
         {
             isDummyData.Click += isDummyData_Click;
 
-            TreeNode selectedNode = ((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.SelectedNode;
+            EmployeeTreeNode selectedNode = (EmployeeTreeNode)((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.SelectedNode;
             int level = selectedNode.Level + 1;
 
             data = new Data();
             dataManager = new DataManager(data);
             _roleTreeStructure = dataManager.LoadRoleData();
-            Queue<RoleTreeNode> q = _roleTreeStructure.SearchByLevelOrderTraversal(_roleTreeStructure, level);
+            Queue<RoleTreeNode> q = new Queue<RoleTreeNode>();
+            q = _roleTreeStructure.SearchByLevelOrderTraversal(_roleTreeStructure, level);
 
-            this.reportingOfficerTextBox.Text = selectedNode.Text;
+            this.reportingOfficerTextBox.Text = selectedNode.Employee.Name;
             foreach (RoleTreeNode node in q)
             {
                 roleComboBox.Items.Add(node.Role.Name);
@@ -51,6 +52,8 @@ namespace DSAL_CA2
             int salary = int.Parse(salaryTextBox.Text.Trim());
             string role = roleComboBox.SelectedItem.ToString();
             string reportingOfficer = reportingOfficerTextBox.Text.Trim();
+            bool isDummyDataValue = false;
+            bool isSalaryAcc = true;
 
             if (salary < 0)
             {
@@ -59,14 +62,15 @@ namespace DSAL_CA2
 
             if (isDummyData.Checked == true)
             {
-                if (isAccCheckBox.Checked == true)
+                isDummyDataValue = true;
+                if (isAccCheckBox.Checked == false)
                 {
-
+                    isSalaryAcc = false;
                 }
             }
             if (employeeName != "")
             {
-                AddItemCallback(employeeName, salary, role, reportingOfficer);
+                AddItemCallback(employeeName, salary, role, reportingOfficer, isDummyDataValue, isSalaryAcc);
                 this.DialogResult = DialogResult.OK;
             }
         }

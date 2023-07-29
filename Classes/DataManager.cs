@@ -62,7 +62,7 @@ namespace DSAL_CA2.Classes
         public EmployeeTreeNode generateDefaultEmployeeTree()
         {
             Employee newEmployee = new Employee("ROOT");
-            newEmployee.role = _data.RoleTreeStructure.Role;
+            newEmployee.roleList.Add(_data.RoleTreeStructure.Role);
             _data.EmployeeTreeStructure = new EmployeeTreeNode(newEmployee);
             return _data.EmployeeTreeStructure;
         }
@@ -157,5 +157,63 @@ namespace DSAL_CA2.Classes
                 return null;
             }
         }
+
+        public bool IsTeamFull(RoleTreeNode roleTree, EmployeeTreeNode employeeTree)
+        {
+            List<Role> fullTeam = getTeam(roleTree);
+
+            if (roleTree == null && employeeTree == null)
+                return true;
+
+            if (roleTree == null || employeeTree == null)
+                return false;
+
+            if (!roleTree.Role.Equals(employeeTree.localRole))
+                return false;
+
+            if (employeeTree.ChildEmployeeTreeNodes.Count < roleTree.ChildRoleTreeNodes.Count)
+                return false;
+
+            for (int i = 0; i < fullTeam.Count; i++)
+            {
+                if (fullTeam[i].Name.Equals(employeeTree.ChildEmployeeTreeNodes[i].localRole.Name))
+                {
+                    i++;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public List<Role> getTeam(RoleTreeNode parentRoleNode)
+        {
+            List<Role> fullTeam = new List<Role>();
+            for (int i = 0; i < parentRoleNode.ChildRoleTreeNodes.Count; i++)
+            {
+                fullTeam.Add(parentRoleNode.ChildRoleTreeNodes[i].Role);
+            }
+            return fullTeam;
+        }
+
+        public EmployeeTreeNode CopyTreeNode(EmployeeTreeNode sourceNode)
+        {
+            if (sourceNode == null)
+                return null;
+
+            EmployeeTreeNode copyNode = new EmployeeTreeNode(sourceNode.Employee);
+
+            foreach (var child in sourceNode.ChildEmployeeTreeNodes)
+            {
+                EmployeeTreeNode childCopy = CopyTreeNode(child);
+                copyNode.ChildEmployeeTreeNodes.Add(childCopy);
+            }
+
+            return copyNode;
+        }
+
     }//end of class RoleManager
 }

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using DSAL_CA1.Classes;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Collections;
 
 namespace DSAL_CA2
 {
@@ -27,8 +28,6 @@ namespace DSAL_CA2
         private int LastNodeIndex = 0;
         private string LastSearchText;
         private string _foundTeam;
-        
-
 
         public ProjectForm()
         {
@@ -40,18 +39,23 @@ namespace DSAL_CA2
             data = new Data();
             projectManager = new DataManager(data);
 
-            data.RoleTreeStructure = new();
-            _roleTreeStructure = data.RoleTreeStructure;
             _roleTreeStructure = projectManager.LoadRoleData();
+            if (_roleTreeStructure == null)
+            {
+                MessageBox.Show("Please set up the role hierarchy before setting up project list");
+            }
 
-            _employeeTreeStructure = data.EmployeeTreeStructure;
             _employeeTreeStructure = projectManager.LoadEmployeeData();
+            if (_employeeTreeStructure == null)
+            {
+                MessageBox.Show("Please set up the employee hierarchy before setting up the project list");
+            }
+            else
+            {
+                treeViewEmployee.Nodes.Add(_employeeTreeStructure);
+            }
 
-            _projectList = data.ProjectList;
             _projectList = projectManager.LoadProjectList();
-
-            this.treeViewEmployee.Nodes.Clear();
-            this.treeViewEmployee.Nodes.Add(_employeeTreeStructure);
             this.treeViewEmployee.ExpandAll();
 
             modeComboBox.Items.Add("View");
@@ -69,12 +73,6 @@ namespace DSAL_CA2
             }
         }
 
-
-        private void Form3_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            ((ParentForm)this.MdiParent).form3 = null;
-        }
-
         //expand employee tree view 
         private void buttonExpandAll_Click(object sender, EventArgs e)
         {
@@ -89,7 +87,7 @@ namespace DSAL_CA2
 
         private void buttonReset_Click(object sender, EventArgs e)
         {
-
+            projectListView.Items.Clear();
         }
 
         private void buttonSave_Click(object sender, EventArgs e)
@@ -106,48 +104,7 @@ namespace DSAL_CA2
         //search for teams button in add project panel 
         private void searchButton_Click(object sender, EventArgs e)
         {
-            string searchText = "";
-            if (String.IsNullOrEmpty(searchText))
-            {
-                return;
-            };
-
-            if (LastSearchText != searchText)
-            {
-                //It's a new Search
-                CurrentNodeMatches.Clear();
-                LastSearchText = searchText;
-                LastNodeIndex = 0;
-                SearchNodes(searchText, treeViewEmployee.Nodes[0]);
-            }
-
-            if (LastNodeIndex >= 0 && CurrentNodeMatches.Count > 0 && LastNodeIndex < CurrentNodeMatches.Count)
-            {
-                TreeNode selectedNode = CurrentNodeMatches[LastNodeIndex];
-                LastNodeIndex++;
-                this.treeViewEmployee.SelectedNode = selectedNode;
-                this.treeViewEmployee.SelectedNode.Expand();
-                this.treeViewEmployee.Select();
-
-            }
-        }
-
-        private void SearchNodes(string SearchText, TreeNode StartNode)
-        {
-            TreeNode node = null;
-            while (StartNode != null)
-            {
-                if (StartNode.Text.ToLower().Contains(SearchText.ToLower()))
-                {
-                    CurrentNodeMatches.Add(StartNode);
-                };
-                if (StartNode.Nodes.Count != 0)
-                {
-                    SearchNodes(SearchText, StartNode.Nodes[0]);//Recursive Search 
-                };
-                StartNode = StartNode.NextNode;
-            };
-
+            searchForTeam();
         }
 
         //cancel button in add project view 
@@ -165,17 +122,19 @@ namespace DSAL_CA2
             string projName = projNameTextBox.Text.Trim();
             int revenue = int.Parse(revenueTextBox.Text.Trim());
             string teamLead = teamLeadComboBox.SelectedText.Trim();
-            //search for team leader 
+
+            List<EmployeeTreeNode> resultNodes = new List<EmployeeTreeNode>();
+            _employeeTreeStructure.SearchByEmployeeName(teamLead, ref resultNodes);
 
             Project newProject = new Project(projName);
             newProject.revenue = revenue;
-            //newProject.teamLead = teamLead;
+            newProject.teamLead = resultNodes[0].Employee;
 
             ListViewItem proj = new ListViewItem(newProject.UUID);
             proj.SubItems.Add(newProject.projName);
             proj.SubItems.Add(newProject.revenue.ToString());
             proj.SubItems.Add(newProject.teamLead.Name);
-            proj.Tag = proj;
+            proj.Tag = newProject;
 
             projectListView.Items.Add(proj);
             MessageBox.Show("Project has been added");
@@ -184,13 +143,30 @@ namespace DSAL_CA2
         //search for teams in view/edit project panel
         private void searchButton2_Click(object sender, EventArgs e)
         {
-
+            searchForTeam();
         }
 
         //confirm edit button in view/edit project panel
         private void confirmEditButton_Click(object sender, EventArgs e)
         {
+            string uuid = projectListView.SelectedItems[0].SubItems[0].Text;
+            string projname = projectListView.SelectedItems[0].SubItems[1].Text;
+            string revenue = projectListView.SelectedItems[0].SubItems[2].Text;
+            string teamLead = projectListView.SelectedItems[0].SubItems[3].Text;
 
+            List<EmployeeTreeNode> resultNodes = new List<EmployeeTreeNode>();
+            _employeeTreeStructure.SearchByEmployeeName(teamLead, ref resultNodes);
+
+            foreach (Project proj in _projectList)
+            {
+                if (proj.UUID == uuid)
+                {
+                    proj.projName = projname;
+                    proj.revenue = int.Parse(revenue);
+                    proj.teamLead = resultNodes[0].Employee;
+                }
+            }
+            projectManager.SaveProjectList();
         }
 
         //delete button in view/edit project panel
@@ -199,6 +175,7 @@ namespace DSAL_CA2
             Project proj = (Project)projectListView.SelectedItems[0].Tag;
             projectListView.SelectedItems.Clear();
             _projectList.Remove(proj);
+            projectManager.SaveProjectList();
             MessageBox.Show("Project has been deleted");
         }
 
@@ -223,7 +200,89 @@ namespace DSAL_CA2
 
         private void searchForTeam()
         {
+            Queue<EmployeeTreeNode> fullTeams = new Queue<EmployeeTreeNode>();
 
+            int level = _employeeTreeStructure.LastNode.Level + 1;
+            Queue<EmployeeTreeNode> teamLeaders = _employeeTreeStructure.SearchByLevelOrderTraversal(_employeeTreeStructure, level);
+
+            level = _roleTreeStructure.LastNode.Level + 1;
+            Queue<RoleTreeNode> teamLeaderRoles = _roleTreeStructure.LevelOrderTraversal(_roleTreeStructure, level);
+
+            while (teamLeaderRoles.Count > 0)
+            {
+                RoleTreeNode role = teamLeaderRoles.Dequeue();
+                while (teamLeaders.Count > 0)
+                {
+                    EmployeeTreeNode teamLeader = teamLeaders.Dequeue();
+                    bool isFullTeam = projectManager.IsTeamFull(role, teamLeader);
+                    if (isFullTeam)
+                    {
+                        fullTeams.Enqueue(teamLeader);
+                    }
+                }
+            }
+
+            //need to check whether the revenue of the team matches the combined cost to hire the team
+
+            List<int> teamCost = new List<int>();
+            int revenue = int.Parse(revenueTextBox.Text);
+            int revenue2 = int.Parse(revenue2TextBox.Text);
+
+            while (fullTeams.Count > 0)
+            {
+                int combinedCost = 0;
+                EmployeeTreeNode teamLeader = fullTeams.Dequeue();
+                if (teamLeader.Employee.isSalaryAcc == true)
+                {
+                    combinedCost += teamLeader.Employee.Salary;
+                }
+
+                foreach (EmployeeTreeNode child in teamLeader.ChildEmployeeTreeNodes)
+                {
+                    if (child.Employee.isSalaryAcc == true)
+                    {
+                        combinedCost += child.Employee.Salary;
+                    }
+                }
+                teamCost.Add(combinedCost);
+            }
+
+            List<int> index = new List<int>();
+
+            int i = 0;
+            foreach (int cost in teamCost)
+            {
+                if (revenue >= cost)
+                {
+                    index.Add(i);
+                }
+                if (revenue2 >= cost)
+                {
+                    index.Add(i);
+                }
+                i++;
+            }
+
+            int k = 0;
+            while (fullTeams.Count > 0)
+            {
+                EmployeeTreeNode teamLeader = fullTeams.Dequeue();
+                foreach (int j in index)
+                {
+                    if (k == j)
+                    {
+                        teamLeader.BackColor = Color.Gold;
+                        teamLeadComboBox.Items.Add(teamLeader.Employee.Name);
+                        teamLead2ComboBox.Items.Add(teamLeader.Employee.Name);
+
+                        foreach (EmployeeTreeNode child in teamLeader.ChildEmployeeTreeNodes)
+                        {
+                            child.BackColor = Color.Gold;
+                        }
+                    }
+                }
+                k++;
+            }
         }
     }
 }

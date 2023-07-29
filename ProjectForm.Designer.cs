@@ -406,7 +406,8 @@
             // 
             // uuidTextBox
             // 
-            uuidTextBox.BackColor = SystemColors.HighlightText;
+            uuidTextBox.BackColor = SystemColors.ButtonFace;
+            uuidTextBox.Enabled = false;
             uuidTextBox.Location = new Point(129, 34);
             uuidTextBox.Margin = new Padding(2);
             uuidTextBox.Name = "uuidTextBox";
@@ -426,6 +427,8 @@
             // 
             // teamLead2ComboBox
             // 
+            teamLead2ComboBox.BackColor = SystemColors.Menu;
+            teamLead2ComboBox.Enabled = false;
             teamLead2ComboBox.FormattingEnabled = true;
             teamLead2ComboBox.Location = new Point(129, 122);
             teamLead2ComboBox.Margin = new Padding(2);

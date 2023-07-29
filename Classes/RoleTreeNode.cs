@@ -51,6 +51,45 @@ namespace DSAL_CA1.Classes
             parentNode.ChildRoleTreeNodes.Remove(nodeToDelete);
         }
 
+        public Queue<RoleTreeNode> LevelOrderTraversal(RoleTreeNode root, int level)
+        {
+            if (root == null)
+                return null;
+
+            // Standard level order traversal code
+            // using queue
+            Queue<RoleTreeNode> q = new Queue<RoleTreeNode>(); // Create a queue
+            q.Enqueue(root); // Enqueue root
+            int k = 0;
+            while (q.Count != 0)
+            {
+                int n = q.Count;
+
+                // If this node has children
+                while (n > 0)
+                {
+                    // Dequeue an item from queue
+                    // and print it
+                    RoleTreeNode p = q.Peek();
+                    q.Dequeue();
+                    Console.Write(p.data + " ");
+
+                    // Enqueue all children of
+                    // the dequeued item
+                    for (int i = 0; i < p.ChildTreeNodes.Count; i++)
+                        q.Enqueue(p.ChildRoleTreeNodes[i]);
+                    n--;
+                }
+
+                k++;
+                if (k == level)
+                {
+                    return q;
+                }
+            }
+            return null;
+        }
+
         public void RebuildTreeNodes()
         {
             this.Text = this.Role.Name;
@@ -129,13 +168,11 @@ namespace DSAL_CA1.Classes
             }
         }
 
-
         public Queue<RoleTreeNode> SearchByLevelOrderTraversal(RoleTreeNode root, int level)
         {
             if (root == null)
                 return null;
 
-            
             Queue<RoleTreeNode> q = new Queue<RoleTreeNode>();
             q.Enqueue(root); 
             int k = 0;

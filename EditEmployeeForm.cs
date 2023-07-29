@@ -55,6 +55,7 @@ namespace DSAL_CA2
             if (salary < 0)
             {
                 MessageBox.Show("Employee salary must not be less than 0. Please enter a valid employee salary");
+                return;
             }
 
             if (isAccCheckBox.Checked == false)

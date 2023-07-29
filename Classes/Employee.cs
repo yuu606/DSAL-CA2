@@ -14,10 +14,12 @@ namespace DSAL_CA2.Classes
     {
         public EmployeeTreeNode Container { get; set; }
         public string UUID { get; set; }
-        public string ReportingOfficer { get; set; }
+        public List<Employee> ReportingOfficer { get; set; }
         public string Name { get; set; }
         public int Salary { get; set; }
-        public Role role { get; set; }
+        //public Role role { get; set; }
+        //public Role role2 { get; set; }
+        public List<Role> roleList { get; set; }
         public List<Project> Projects { get; set; }
         public bool isDummyData { get; set; }
         public bool isSalaryAcc { get; set; }
@@ -26,7 +28,7 @@ namespace DSAL_CA2.Classes
         {
             UUID = General.GenerateUUID();
             Projects = new List<Project>();
-            role = new Role();
+            roleList = new List<Role>();
             Name = name;
             isDummyData = false;
             isSalaryAcc = true;

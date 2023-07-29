@@ -9,33 +9,31 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 
 namespace DSAL_CA2
 {
     public partial class SwapEmployeeForm : Form
     {
-        public delegate void SwapItemDelegate(string uuid, string name, string reportingOfficer, int salary, string roleStr, string projectStr);
+        public delegate void SwapItemDelegate(string uuid, string selectedNodeText);
         public SwapItemDelegate SwapItemCallback;
 
-        public SwapEmployeeForm(string uuid, string name, string reportingOfficer, int salary, string roleStr, string projectStr)
+        public SwapEmployeeForm()
         {
             InitializeComponent();
-            uuidTextBox.Text = uuid;
-            nameTextBox.Text = name;
-            reportingOfficerTextBox.Text = reportingOfficer;
-            salaryTextBox.Text = salary.ToString();
-            roleTextBox.Text = roleStr;
-            projectsTextBox.Text = projectStr;
         }
 
         private void SwapEmployeeForm_Load(object sender, EventArgs e)
         {
-            TreeNode selectedNode = ((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.SelectedNode;
+            EmployeeTreeNode selectedNode = (EmployeeTreeNode)((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.SelectedNode;
             selectedEmployeeTextBox.Text = selectedNode.Text;
+
             foreach (TreeNode node in ((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.Nodes)
             {
                 treeViewEmployee2.Nodes.Add(node);
             }
+
+            treeViewEmployee2.AfterSelect += employeeNodeTreeView_Click;
         }
 
         private void cancelButton_Click(object sender, EventArgs e)
@@ -45,18 +43,65 @@ namespace DSAL_CA2
 
         private void swapButton_Click(object sender, EventArgs e)
         {
-            string name = nameTextBox.Text.Trim();
             string uuid = uuidTextBox.Text.Trim();
-            string reportingOfficer = reportingOfficerTextBox.Text.Trim();
-            int salary = int.Parse(salaryTextBox.Text);
-            string roleStr = roleTextBox.Text.Trim();
-            string projectStr = projectsTextBox.Text.Trim();
+            string selectedNodeText = selectedEmployeeTextBox.Text.Trim();
 
-            if (name != "")
+            EmployeeTreeNode selectedNode = (EmployeeTreeNode)((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.SelectedNode;
+            if (selectedNode.Level != treeViewEmployee2.SelectedNode.Level)
             {
-                SwapItemCallback(uuid, name, reportingOfficer, salary, roleStr, projectStr);
-                this.DialogResult = DialogResult.OK;
+                MessageBox.Show("You can only swap employees on the same role level");
             }
+            else
+            {
+                if (uuid != "" && selectedNodeText != "")
+                {
+                    SwapItemCallback(uuid, selectedNodeText);
+                    this.DialogResult = DialogResult.OK;
+                }
+            }
+        }
+
+        private void employeeNodeTreeView_Click(object sender, TreeViewEventArgs e)
+        {
+            //get employeetreenode of selected node 
+            EmployeeTreeNode employeeNode = (EmployeeTreeNode)this.treeViewEmployee2.SelectedNode;
+            string projStr = "No Projects";
+
+            //check whether employee has projects assigned 
+            if (employeeNode.Employee.Projects.Count > 0)
+            {
+                if (employeeNode.Employee.Projects.Count > 1)
+                {
+                    //populate project string
+                    foreach (Project proj in employeeNode.Employee.Projects)
+                    {
+                        projStr += proj.projName + " ";
+                    }
+                }
+                else
+                {
+                    projStr = employeeNode.Employee.Projects[0].projName;
+                }
+            }
+
+            //populate read-only textboxes
+            nameTextBox.Text = employeeNode.Employee.Name;
+            roleTextBox.Text = employeeNode.localRole.Name;
+            projectsTextBox.Text = projStr;
+            if (employeeNode.Text.Contains("ROOT") == true)
+            {
+                String na = "N.A.";
+                reportingOfficerTextBox.Text = na;
+                salaryTextBox.Text = na;
+                uuidTextBox.Text = "ROOT";
+            }
+            else
+            {
+                salaryTextBox.Text = employeeNode.Employee.Salary.ToString();
+                reportingOfficerTextBox.Text = employeeNode.localRO.Name;
+                uuidTextBox.Text = employeeNode.Employee.UUID;
+            }
+
         }
     }
 }
