@@ -59,7 +59,7 @@ namespace DSAL_CA2
             {
                 treeViewEmployee.Nodes.Add(_employeeTreeStructure);
             }
-            employeeManager.SaveEmployeeData();
+            
             treeViewEmployee.ExpandAll();
             treeViewEmployee.AfterSelect += employeeNodeTreeView_Click;
             InitializeMenuTreeView();

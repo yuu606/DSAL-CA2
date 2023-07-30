@@ -53,7 +53,8 @@ namespace DSAL_CA2
             //if no role hierarchy data was saved, generate default role tree structure 
             if (_roleTreeStructure == null)
             {
-                treeViewRole.Nodes.Add(roleManager.generateDefaultRoleTree());
+                _roleTreeStructure = roleManager.generateDefaultRoleTree();
+                treeViewRole.Nodes.Add(_roleTreeStructure);
             }
             else //if previous saved data found, add nodes to tree view
             {

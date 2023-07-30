@@ -36,9 +36,9 @@ namespace DSAL_CA2
             data = new Data();
             dataManager = new DataManager(data);
             _roleTreeStructure = dataManager.LoadRoleData();
+
             Queue<RoleTreeNode> q = new Queue<RoleTreeNode>();
             q = _roleTreeStructure.SearchByLevelOrderTraversal(_roleTreeStructure, level);
-
             this.reportingOfficerTextBox.Text = selectedNode.Employee.Name;
             foreach (RoleTreeNode node in q)
             {
