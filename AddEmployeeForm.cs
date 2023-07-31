@@ -32,13 +32,21 @@ namespace DSAL_CA2
 
             EmployeeTreeNode selectedNode = (EmployeeTreeNode)((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.SelectedNode;
             int level = selectedNode.Level + 1;
+            String parentRoleUUID = selectedNode.localRoleTreeNode.Role.UUID;
 
-            data = new Data();
+            Data data = new Data();
             dataManager = new DataManager(data);
             _roleTreeStructure = dataManager.LoadRoleData();
+            List<RoleTreeNode> resultNodes = new List<RoleTreeNode>();
+            _roleTreeStructure.SearchByUUID(parentRoleUUID, ref resultNodes);
+
+            if (selectedNode.localRoleTreeNode.Role.Name == "ROOT")
+            {
+                resultNodes.Add(_roleTreeStructure);
+            }
 
             Queue<RoleTreeNode> q = new Queue<RoleTreeNode>();
-            q = _roleTreeStructure.SearchByLevelOrderTraversal(_roleTreeStructure, level);
+            q = _roleTreeStructure.SearchByLevelOrderTraversal(resultNodes[0], level);
             this.reportingOfficerTextBox.Text = selectedNode.Employee.Name;
             foreach (RoleTreeNode node in q)
             {

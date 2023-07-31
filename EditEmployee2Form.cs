@@ -49,7 +49,7 @@ namespace DSAL_CA2
             this.isAccCheckBox.Checked = selectedNode.Employee.isSalaryAcc;
             this.isDummyDataCheckBox.Checked = selectedNode.Employee.isDummyData;
             this.reportingOfficerComboBox.SelectedText = selectedNode.localRO.Name;
-            this.roleComboBox.SelectedText = selectedNode.localRole.Name;
+            this.roleComboBox.SelectedText = selectedNode.localRoleTreeNode.Role.Name;
 
             //populate role combobox options
             foreach (RoleTreeNode node in q)

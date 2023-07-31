@@ -15,7 +15,7 @@ namespace DSAL_CA2.Classes
         public EmployeeTreeNode EmployeeTreeStructure { get; set; }
         public List<Project> ProjectList { get; set; }
 
-        public Data(){}
+        public Data() { }
 
         // [ SERIALIZE ]
         public void GetObjectData(SerializationInfo info, StreamingContext context)
@@ -24,7 +24,6 @@ namespace DSAL_CA2.Classes
             info.AddValue("RoleTreeStructure", RoleTreeStructure);
             info.AddValue("EmployeeTreeStructure", EmployeeTreeStructure);
             info.AddValue("ProjectList", ProjectList);
-
         }//end of GetObjectData [ SERIALIZE ]
 
         // [DESERIALIZE]

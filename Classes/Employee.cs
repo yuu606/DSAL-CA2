@@ -29,6 +29,7 @@ namespace DSAL_CA2.Classes
             UUID = General.GenerateUUID();
             Projects = new List<Project>();
             roleList = new List<Role>();
+            ReportingOfficer = new List<Employee>();
             Name = name;
             isDummyData = false;
             isSalaryAcc = true;

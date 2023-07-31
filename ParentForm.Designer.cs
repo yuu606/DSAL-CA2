@@ -76,19 +76,19 @@
             // roleToolStripMenuItem
             // 
             roleToolStripMenuItem.Name = "roleToolStripMenuItem";
-            roleToolStripMenuItem.Size = new Size(180, 22);
+            roleToolStripMenuItem.Size = new Size(126, 22);
             roleToolStripMenuItem.Text = "Role";
             // 
             // employeeToolStripMenuItem
             // 
             employeeToolStripMenuItem.Name = "employeeToolStripMenuItem";
-            employeeToolStripMenuItem.Size = new Size(180, 22);
+            employeeToolStripMenuItem.Size = new Size(126, 22);
             employeeToolStripMenuItem.Text = "Employee";
             // 
             // projectToolStripMenuItem
             // 
             projectToolStripMenuItem.Name = "projectToolStripMenuItem";
-            projectToolStripMenuItem.Size = new Size(180, 22);
+            projectToolStripMenuItem.Size = new Size(126, 22);
             projectToolStripMenuItem.Text = "Project";
             // 
             // ParentForm
@@ -100,10 +100,9 @@
             Controls.Add(menuStrip2);
             IsMdiContainer = true;
             MainMenuStrip = menuStrip1;
-            Margin = new Padding(2, 2, 2, 2);
+            Margin = new Padding(2);
             Name = "ParentForm";
             Text = "ParentForm";
-            Load += ParentForm_Load;
             menuStrip2.ResumeLayout(false);
             menuStrip2.PerformLayout();
             ResumeLayout(false);

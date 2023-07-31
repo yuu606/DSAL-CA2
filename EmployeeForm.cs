@@ -42,24 +42,26 @@ namespace DSAL_CA2
             //add console text
             textBoxConsole.Text = "Each Employee can have a maximum of 2 employee nodes.";
 
+
+            data.RoleTreeStructure = _roleTreeStructure;
             _roleTreeStructure = employeeManager.LoadRoleData();
             if (_roleTreeStructure == null)
             {
                 MessageBox.Show("Please set up the role hierarchy before setting up the Employee hierarchy");
             }
 
+            data.EmployeeTreeStructure = _employeeTreeStructure;
             _employeeTreeStructure = employeeManager.LoadEmployeeData();
-
             if (_employeeTreeStructure == null)
             {
                 _employeeTreeStructure = employeeManager.generateDefaultEmployeeTree();
-                treeViewEmployee.Nodes.Add(_employeeTreeStructure);
+                treeViewEmployee.Nodes.Add(_employeeTreeStructure); 
             }
             else
             {
                 treeViewEmployee.Nodes.Add(_employeeTreeStructure);
             }
-            
+
             treeViewEmployee.ExpandAll();
             treeViewEmployee.AfterSelect += employeeNodeTreeView_Click;
             InitializeMenuTreeView();
@@ -130,7 +132,7 @@ namespace DSAL_CA2
 
                     //check if the team will remain complete after removing the employee 
                     List<RoleTreeNode> roleNodes = new List<RoleTreeNode>();
-                    _roleTreeStructure.SearchByRoleName(_selectedNode.ParentEmployeeTreeNode.Name, ref roleNodes);
+                    _roleTreeStructure.SearchByRoleName(_selectedNode.ParentEmployeeTreeNode.localRoleTreeNode.Role.Name, ref roleNodes);
                     RoleTreeNode _roleParent = roleNodes[0];
 
                     EmployeeTreeNode _employeeParent = employeeManager.CopyTreeNode(_selectedNode.ParentEmployeeTreeNode);
@@ -215,18 +217,28 @@ namespace DSAL_CA2
             Employee newEmployee = new Employee(employeeName);
             newEmployee.Salary = salary;
             newEmployee.roleList.Add(roleNodes[0].Role);
-            newEmployee.ReportingOfficer.Add(employeeNodes[0].Employee);
             newEmployee.isDummyData = isDummyDataValue;
             newEmployee.isSalaryAcc = isSalaryAcc;
 
             //instantiate new employee tree node
             EmployeeTreeNode newEmployeeNode = new EmployeeTreeNode(newEmployee);
-            newEmployeeNode.localRole = roleNodes[0].Role;
-            newEmployeeNode.localRO = employeeNodes[0].Employee;
+            newEmployeeNode.localRoleTreeNode.Role = roleNodes[0].Role;
+
+            if (employeeNodes.Count == 0)
+            {
+                newEmployee.ReportingOfficer.Add(_employeeTreeStructure.Employee);
+                newEmployeeNode.localRO = _employeeTreeStructure.Employee;
+            }
+            else
+            {
+                newEmployee.ReportingOfficer.Add(employeeNodes[0].Employee);
+                newEmployeeNode.localRO = employeeNodes[0].Employee;
+            }
+
             this._selectedNode.AddChildEmployeeTreeNode(newEmployeeNode);
 
             //save to data file
-            employeeManager.SaveEmployeeData();
+            employeeManager.SaveData();
             //expand tree view
             treeViewEmployee.ExpandAll();
         }//end of AddItemCallbackFn method
@@ -240,7 +252,7 @@ namespace DSAL_CA2
             resultNodes[0].Employee.isSalaryAcc = isSalaryAcc;
             resultNodes[0].Employee.isDummyData = isDummyData;
             resultNodes[0].Text = employeeName;
-            employeeManager.SaveEmployeeData();
+            employeeManager.SaveData();
             treeViewEmployee.ExpandAll();
         }//end of ModifyItemCallbackFn method
 
@@ -256,11 +268,11 @@ namespace DSAL_CA2
 
             Employee employeeRef = uuidNodes[0].Employee; //get referenced employee
             EmployeeTreeNode newEmployeeTreeNode = new EmployeeTreeNode(employeeRef); //instantiate new employee tree node
-            newEmployeeTreeNode.localRole = roleNodes[0].Role; //assign local role
+            newEmployeeTreeNode.localRoleTreeNode.Role = roleNodes[0].Role; //assign local role
             newEmployeeTreeNode.localRO = employeeNodes[0].Employee; //assign local RO
             employeeNodes[0].AddChildEmployeeTreeNode(newEmployeeTreeNode); //add new employee tree node 
 
-            employeeManager.SaveEmployeeData();
+            employeeManager.SaveData();
             treeViewEmployee.ExpandAll();
         }
 
@@ -275,7 +287,7 @@ namespace DSAL_CA2
 
             _employeeTreeStructure.SwapNodes(node1, node2);
 
-            employeeManager.SaveEmployeeData();
+            employeeManager.SaveData();
             treeViewEmployee.ExpandAll();
         }
 
@@ -354,13 +366,13 @@ namespace DSAL_CA2
         //Save button event handler 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            employeeManager.SaveEmployeeData();
+            employeeManager.SaveData();
         }
 
         //Load button event handler 
         private void buttonLoad_Click(object sender, EventArgs e)
         {
-            employeeManager.SaveEmployeeData();
+            employeeManager.LoadEmployeeData();
         }
 
         //Expand all nodes in employee tree view event handler 

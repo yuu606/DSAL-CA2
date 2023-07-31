@@ -86,7 +86,7 @@ namespace DSAL_CA2
 
             //populate read-only textboxes
             nameTextBox.Text = employeeNode.Employee.Name;
-            roleTextBox.Text = employeeNode.localRole.Name;
+            roleTextBox.Text = employeeNode.localRoleTreeNode.Role.Name;
             projectsTextBox.Text = projStr;
             if (employeeNode.Text.Contains("ROOT") == true)
             {

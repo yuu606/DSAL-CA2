@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using DSAL_CA2.Classes;
 
 namespace DSAL_CA2
 {
@@ -26,49 +27,35 @@ namespace DSAL_CA2
 
         private void RoleFormToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (form1 != null)
-            {
-                form1.Show();
-            }
-            else
+            if (form1 == null || form1.IsDisposed)
             {
                 form1 = new RoleForm();
                 form1.MdiParent = this;
-                form1.Show();
             }
+
+            form1.Show();
         }
 
         private void EmployeeFormToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (form2 != null)
-            {
-                form2.Show();
-            }
-            else
+            if (form2 == null || form2.IsDisposed)
             {
                 form2 = new EmployeeForm();
                 form2.MdiParent = this;
-                form2.Show();
             }
+
+            form2.Show();
         }
 
         private void ProjectFormToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (form3 != null)
-            {
-                form3.Show();
-            }
-            else
+            if (form3 == null || form3.IsDisposed)
             {
                 form3 = new ProjectForm();
                 form3.MdiParent = this;
-                form3.Show();
             }
-        }
 
-        private void ParentForm_Load(object sender, EventArgs e)
-        {
-
+            form3.Show();
         }
     }
 }

@@ -18,7 +18,7 @@ namespace DSAL_CA2.Classes
         public Employee Employee { get; set; }
         public List<EmployeeTreeNode> ChildEmployeeTreeNodes { get; set; }
         public int localIndex { get; set; }
-        public Role localRole { get; set; }
+        public RoleTreeNode localRoleTreeNode { get; set; }
         public Employee localRO { get; set; }
         public bool IsLeaf { get; set; }
         public bool IsRoot { get; set; }
@@ -27,10 +27,10 @@ namespace DSAL_CA2.Classes
         {
             ParentEmployeeTreeNode = null;
             ChildEmployeeTreeNodes = new List<EmployeeTreeNode>();
+            localRoleTreeNode = new RoleTreeNode();
             this.Employee = data;
             Employee.Container = this;
             localIndex = 0;
-            localRole = data.roleList[localIndex];
             localRO = null;
             string roleText = "";
             int i = 0;
@@ -123,7 +123,19 @@ namespace DSAL_CA2.Classes
 
         public void RebuildTreeNodes()
         {
-            this.Text = this.Employee.Name;
+            int j = 0;
+            String roleText = "";
+            foreach (Role role in this.Employee.roleList)
+            {
+                roleText += role.Name;
+                if (j == 1)
+                {
+                    roleText += ", " + role.Name;
+                }
+                j++;
+            }
+            this.Text = this.Employee.Name + " - " + roleText + " (S$" + this.Employee.Salary + ")";
+
             if (this.ChildEmployeeTreeNodes.Count > 0)
             {
                 int i = 0;
@@ -182,6 +194,10 @@ namespace DSAL_CA2.Classes
 
         public void SearchByEmployeeName(string employeeName, ref List<EmployeeTreeNode> foundNodes)
         {
+            if (employeeName == "ROOT")
+            {
+                return;
+            }
             if (this.ChildEmployeeTreeNodes.Count > 0)
             {
                 int i = 0;

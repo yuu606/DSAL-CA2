@@ -49,6 +49,7 @@ namespace DSAL_CA2
                 + "Only one level of role is allowed under a project leader role.";
 
             //load previously saved role hierarchy data (if any)
+            data.RoleTreeStructure = _roleTreeStructure;
             _roleTreeStructure = roleManager.LoadRoleData();
             //if no role hierarchy data was saved, generate default role tree structure 
             if (_roleTreeStructure == null)
@@ -61,7 +62,7 @@ namespace DSAL_CA2
                 treeViewRole.Nodes.Add(_roleTreeStructure);
             }
             treeViewRole.ExpandAll(); //expand tree view 
-            treeViewRole.AfterSelect += roleNodeTreeView_Click; //add tree view node onclick event handler 
+            treeViewRole.AfterSelect += roleNodeTreeView_Click; //add tree view node onclick event handler
             InitializeMenuTreeView(); //initialize tree view's menu
         }
         //---------------------------------------------------------------------------------------------
@@ -171,7 +172,7 @@ namespace DSAL_CA2
                 resultNodes[0].IsLeaf = true; //set updated isLeaf bool
             }
             textBoxConsole.Text = "Role Edited:" + Environment.NewLine + " Name:" + roleName; //update console text
-            roleManager.SaveRoleData(); //save role data 
+            roleManager.SaveData(); //save role data 
         }
         //---------------------------------------------------------------------------------------------
 
@@ -187,7 +188,7 @@ namespace DSAL_CA2
 
             treeViewRole.ExpandAll(); // expand tree view 
             textBoxConsole.Text = "Role Added:" + Environment.NewLine + " Name:" + roleName; //update console text
-            roleManager.SaveRoleData(); //save role data 
+            roleManager.SaveData(); //save role data 
         }
         //---------------------------------------------------------------------------------------------
 
@@ -205,7 +206,7 @@ namespace DSAL_CA2
         //---------------------------------------------------------------------------------------------
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            roleManager.SaveRoleData(); //call save role data operator 
+            roleManager.SaveData(); //call save role data operator 
             MessageBox.Show("Hierarchy simulation has been successfully saved");
         }
         //---------------------------------------------------------------------------------------------
@@ -254,5 +255,10 @@ namespace DSAL_CA2
             projLeadCheckBox.Checked = roleNode.Role.isProjLead; //set project leader checkbox state
         }
         //---------------------------------------------------------------------------------------------
+
+        private void closing_click(object sender, EventArgs e)
+        {
+            
+        }
     }
 }

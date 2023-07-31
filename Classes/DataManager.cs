@@ -38,12 +38,6 @@ namespace DSAL_CA2.Classes
             _data.RoleTreeStructure = new RoleTreeNode(new Role("ROOT"));
             return _data.RoleTreeStructure;   
         }
-        public void SaveRoleData()
-        {
-            _data.ProjectList = null;
-            _data.EmployeeTreeStructure = null;
-            saveData();
-        }//end of SaveRoleData
 
         public RoleTreeNode LoadRoleData()
         {
@@ -63,15 +57,10 @@ namespace DSAL_CA2.Classes
         {
             Employee newEmployee = new Employee("ROOT");
             newEmployee.roleList.Add(_data.RoleTreeStructure.Role);
+            RoleTreeNode root = LoadRoleData();
             _data.EmployeeTreeStructure = new EmployeeTreeNode(newEmployee);
+            _data.EmployeeTreeStructure.localRoleTreeNode = root;
             return _data.EmployeeTreeStructure;
-        }
-
-        public void SaveEmployeeData()
-        {
-            _data.ProjectList = null;
-            _data.RoleTreeStructure = null;
-            saveData();
         }
 
         public EmployeeTreeNode LoadEmployeeData()
@@ -100,12 +89,6 @@ namespace DSAL_CA2.Classes
             return chs;
         }
 
-        public void SaveProjectList()
-        {
-            _data.RoleTreeStructure = null;
-            _data.EmployeeTreeStructure = null;
-            saveData();
-        }
 
         public List<Project> LoadProjectList()
         {
@@ -114,7 +97,7 @@ namespace DSAL_CA2.Classes
         } 
         //--------------------------------------------------------------------------------------------
 
-        public void saveData()
+        public void SaveData()
         {
             try
             {
@@ -168,7 +151,7 @@ namespace DSAL_CA2.Classes
             if (roleTree == null || employeeTree == null)
                 return false;
 
-            if (!roleTree.Role.Equals(employeeTree.localRole))
+            if (!roleTree.Role.Equals(employeeTree.localRoleTreeNode.Role))
                 return false;
 
             if (employeeTree.ChildEmployeeTreeNodes.Count < roleTree.ChildRoleTreeNodes.Count)
@@ -176,7 +159,7 @@ namespace DSAL_CA2.Classes
 
             for (int i = 0; i < fullTeam.Count; i++)
             {
-                if (fullTeam[i].Name.Equals(employeeTree.ChildEmployeeTreeNodes[i].localRole.Name))
+                if (fullTeam[i].Name.Equals(employeeTree.ChildEmployeeTreeNodes[i].localRoleTreeNode.Role.Name))
                 {
                     i++;
                 }

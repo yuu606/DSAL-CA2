@@ -39,12 +39,14 @@ namespace DSAL_CA2
             data = new Data();
             projectManager = new DataManager(data);
 
+            data.RoleTreeStructure = _roleTreeStructure;
             _roleTreeStructure = projectManager.LoadRoleData();
             if (_roleTreeStructure == null)
             {
                 MessageBox.Show("Please set up the role hierarchy before setting up project list");
             }
 
+            data.EmployeeTreeStructure = _employeeTreeStructure;
             _employeeTreeStructure = projectManager.LoadEmployeeData();
             if (_employeeTreeStructure == null)
             {
@@ -64,6 +66,7 @@ namespace DSAL_CA2
             modeComboBox.SelectedValueChanged += ComboBox_SelectionChanged;
 
             this.projectListView.View = View.Details;
+            data.ProjectList = _projectList;
 
             //add list view headers 
             List<ColumnHeader> chs = projectManager.generateDefaultProjectListView();
@@ -92,7 +95,7 @@ namespace DSAL_CA2
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            projectManager.SaveProjectList();
+            projectManager.SaveData();
         }
 
         private void buttonLoad_Click(object sender, EventArgs e)
@@ -166,7 +169,7 @@ namespace DSAL_CA2
                     proj.teamLead = resultNodes[0].Employee;
                 }
             }
-            projectManager.SaveProjectList();
+            projectManager.SaveData();
         }
 
         //delete button in view/edit project panel
@@ -175,7 +178,7 @@ namespace DSAL_CA2
             Project proj = (Project)projectListView.SelectedItems[0].Tag;
             projectListView.SelectedItems.Clear();
             _projectList.Remove(proj);
-            projectManager.SaveProjectList();
+            projectManager.SaveData();
             MessageBox.Show("Project has been deleted");
         }
 
