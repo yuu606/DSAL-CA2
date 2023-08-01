@@ -30,7 +30,6 @@
         {
             components = new System.ComponentModel.Container();
             contextMenuStrip1 = new ContextMenuStrip(components);
-            menuStrip1 = new MenuStrip();
             menuStrip2 = new MenuStrip();
             formsToolStripMenuItem = new ToolStripMenuItem();
             roleToolStripMenuItem = new ToolStripMenuItem();
@@ -44,16 +43,6 @@
             contextMenuStrip1.ImageScalingSize = new Size(24, 24);
             contextMenuStrip1.Name = "contextMenuStrip1";
             contextMenuStrip1.Size = new Size(61, 4);
-            // 
-            // menuStrip1
-            // 
-            menuStrip1.ImageScalingSize = new Size(24, 24);
-            menuStrip1.Location = new Point(0, 24);
-            menuStrip1.Name = "menuStrip1";
-            menuStrip1.Padding = new Padding(4, 1, 0, 1);
-            menuStrip1.Size = new Size(1384, 24);
-            menuStrip1.TabIndex = 1;
-            menuStrip1.Text = "menuStrip1";
             // 
             // menuStrip2
             // 
@@ -96,10 +85,8 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1384, 761);
-            Controls.Add(menuStrip1);
             Controls.Add(menuStrip2);
             IsMdiContainer = true;
-            MainMenuStrip = menuStrip1;
             Margin = new Padding(2);
             Name = "ParentForm";
             Text = "ParentForm";
@@ -112,7 +99,6 @@
         #endregion
 
         private ContextMenuStrip contextMenuStrip1;
-        private MenuStrip menuStrip1;
         private MenuStrip menuStrip2;
         private ToolStripMenuItem formsToolStripMenuItem;
         private ToolStripMenuItem roleToolStripMenuItem;

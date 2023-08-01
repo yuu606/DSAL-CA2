@@ -48,6 +48,35 @@ namespace DSAL_CA2.Classes
 
         public EmployeeTreeNode() { }
 
+        // [ SERIALIZE ]
+        public void GetObjectData(SerializationInfo info, StreamingContext context)
+        {
+            //add the required data to file
+            info.AddValue("Employee", Employee);
+            info.AddValue("ChildrenEmployeeTreeNodes", ChildEmployeeTreeNodes);
+            info.AddValue("ParentEmployeeTreeNode", ParentEmployeeTreeNode);
+            info.AddValue("localRoleTreeNode", localRoleTreeNode);
+            info.AddValue("localRO", localRO);
+            info.AddValue("localIndex", localIndex);
+
+        }//end of GetObjectData [ SERIALIZE ]
+
+        // [DESERIALIZE]
+        protected EmployeeTreeNode(SerializationInfo info, StreamingContext context)
+        {
+            if (info == null)
+                throw new System.ArgumentNullException("info");
+            this.Employee = (Employee)info.GetValue("Employee", typeof(Employee));
+            this.Employee.Container = this;
+            this.ChildEmployeeTreeNodes = (List<EmployeeTreeNode>)info.GetValue("ChildrenEmployeeTreeNodes", typeof(List<EmployeeTreeNode>));
+            this.ParentEmployeeTreeNode = (EmployeeTreeNode)info.GetValue("ParentEmployeeTreeNode", typeof(EmployeeTreeNode));
+            this.localRoleTreeNode = (RoleTreeNode)info.GetValue("localRoleTreeNode", typeof(RoleTreeNode));
+            this.localRO = info.GetValue("localRO", typeof(Employee)) as Employee;
+            this.localIndex = (int)info.GetValue("localIndex", typeof(int));
+        }//end of RoleTreeNode [ DESERIALIZE ]
+
+        // End Of File IO Functions ---------------------------------------------------------------------------------------
+
         public void AddChildEmployeeTreeNode(EmployeeTreeNode employeeNode)
         {
             employeeNode.ParentEmployeeTreeNode = this;
@@ -148,29 +177,6 @@ namespace DSAL_CA2.Classes
             }
 
         }//End of RebuildTreeNodes
-
-        // [ SERIALIZE ]
-        public void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            //add the required data to file
-            info.AddValue("Employee", Employee);
-            info.AddValue("ChildrenEmployeeTreeNodes", ChildEmployeeTreeNodes);
-            info.AddValue("ParentEmployeeTreeNode", ParentEmployeeTreeNode);
-
-        }//end of GetObjectData [ SERIALIZE ]
-
-        // [DESERIALIZE]
-        protected EmployeeTreeNode(SerializationInfo info, StreamingContext context)
-        {
-            if (info == null)
-                throw new System.ArgumentNullException("info");
-            this.Employee = (Employee)info.GetValue("Employee", typeof(Employee));
-            this.Employee.Container = this;
-            this.ChildEmployeeTreeNodes = (List<EmployeeTreeNode>)info.GetValue("ChildrenEmployeeTreeNodes", typeof(List<EmployeeTreeNode>));
-            this.ParentEmployeeTreeNode = (EmployeeTreeNode)info.GetValue("ParentEmployeeTreeNode", typeof(EmployeeTreeNode));
-        }//end of RoleTreeNode [ DESERIALIZE ]
-
-        // End Of File IO Functions ---------------------------------------------------------------------------------------
 
 
         public void SearchByUUID(string uuid, ref List<EmployeeTreeNode> foundNodes)
