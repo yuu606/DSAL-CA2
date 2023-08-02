@@ -187,7 +187,7 @@ namespace DSAL_CA2
             }
             else 
             {
-                if (_selectedNode.IsLeaf)
+                if (_selectedNode.ParentEmployeeTreeNode.localRoleTreeNode.Role.isProjLead == true)
                 {
                     this._updateMenuItem.Visible = true;
                     this._removeMenuItem.Visible = true;
@@ -373,9 +373,18 @@ namespace DSAL_CA2
         //Load button event handler 
         private void buttonLoad_Click(object sender, EventArgs e)
         {
-            employeeManager.LoadEmployeeData();
+            _employeeTreeStructure = employeeManager.LoadEmployeeData(); // call load role data operator
+            if (_employeeTreeStructure == null)
+            {
+                MessageBox.Show("You have not saved any progress");
+            }
+            else
+            {
+                this.treeViewEmployee.Nodes.Clear(); //clear previous tree nodes (if any)
+                this.treeViewEmployee.Nodes.Add(_employeeTreeStructure); //add loaded role tree structure 
+                this.treeViewEmployee.ExpandAll(); // expand tree view 
+            }
         }
-
         //Expand all nodes in employee tree view event handler 
         private void buttonExpandAll_Click(object sender, EventArgs e)
         {

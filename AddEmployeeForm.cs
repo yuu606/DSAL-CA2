@@ -5,6 +5,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -47,7 +48,7 @@ namespace DSAL_CA2
 
             int level = 1;
             Queue<RoleTreeNode> q = new Queue<RoleTreeNode>();
-            q = _roleTreeStructure.SearchByLevelOrderTraversal(selectedNode.localRoleTreeNode, level);
+            q = _roleTreeStructure.SearchByLevelOrderTraversal(resultNodes[0], 1);
             this.reportingOfficerTextBox.Text = selectedNode.Employee.Name;
             foreach (RoleTreeNode node in q)
             {
@@ -57,30 +58,37 @@ namespace DSAL_CA2
 
         private void addButton_Click(object sender, EventArgs e)
         {
-            string employeeName = nameTextBox.Text.Trim();
-            int salary = int.Parse(salaryTextBox.Text.Trim());
-            string role = roleComboBox.SelectedItem.ToString();
-            string reportingOfficer = reportingOfficerTextBox.Text.Trim();
-            bool isDummyDataValue = false;
-            bool isSalaryAcc = true;
-
-            if (salary < 0)
+            try
             {
-                MessageBox.Show("Employee salary must not be less than 0. Please enter a valid employee salary");
-            }
+                string employeeName = nameTextBox.Text.Trim();
+                int salary = int.Parse(salaryTextBox.Text.Trim());
+                string role = roleComboBox.SelectedItem.ToString();
+                string reportingOfficer = reportingOfficerTextBox.Text.Trim();
+                bool isDummyDataValue = false;
+                bool isSalaryAcc = true;
 
-            if (isDummyData.Checked == true)
-            {
-                isDummyDataValue = true;
-                if (isAccCheckBox.Checked == false)
+                if (salary <= 0)
                 {
-                    isSalaryAcc = false;
+                    MessageBox.Show("Employee salary must not be less than 0. Please enter a valid employee salary");
+                }
+
+                if (isDummyData.Checked == true)
+                {
+                    isDummyDataValue = true;
+                    if (isAccCheckBox.Checked == false)
+                    {
+                        isSalaryAcc = false;
+                    }
+                }
+                if (employeeName != "")
+                {
+                    AddItemCallback(employeeName, salary, role, reportingOfficer, isDummyDataValue, isSalaryAcc);
+                    this.DialogResult = DialogResult.OK;
                 }
             }
-            if (employeeName != "")
+            catch (FormatException)
             {
-                AddItemCallback(employeeName, salary, role, reportingOfficer, isDummyDataValue, isSalaryAcc);
-                this.DialogResult = DialogResult.OK;
+                MessageBox.Show("Please input valid salary value.");
             }
         }
 
