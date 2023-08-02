@@ -1,4 +1,5 @@
-﻿using DSAL_CA2.Classes;
+﻿using DSAL_CA1.Classes;
+using DSAL_CA2.Classes;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -30,7 +31,11 @@ namespace DSAL_CA2
 
         private void EditRoleForm_Load(object sender, EventArgs e)
         {
-            TreeNode selectedNode = ((RoleForm)Owner.ActiveMdiChild).treeViewRole.SelectedNode;
+            RoleTreeNode selectedNode = (RoleTreeNode)((RoleForm)Owner.ActiveMdiChild).treeViewRole.SelectedNode;
+            if (selectedNode.ParentRoleTreeNode.Role.isProjLead == true)
+            {
+                projLeadCheckBox.Enabled = false;
+            }
             this.parentRoleTextBox.Text = selectedNode.Parent.Text;
             this.nameTextBox.Text = selectedNode.Text;
         }

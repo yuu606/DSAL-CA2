@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DSAL_CA1.Classes;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace DSAL_CA2
 {
@@ -28,13 +29,12 @@ namespace DSAL_CA2
 
         private void AddEmployeeForm_Load(object sender, EventArgs e)
         {
-            isDummyData.Click += isDummyData_Click;
+            isDummyData.CheckedChanged += isDummyData_CheckedChanged;
 
             EmployeeTreeNode selectedNode = (EmployeeTreeNode)((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.SelectedNode;
-            int level = selectedNode.Level + 1;
             String parentRoleUUID = selectedNode.localRoleTreeNode.Role.UUID;
 
-            Data data = new Data();
+            Data data = new Data(); 
             dataManager = new DataManager(data);
             _roleTreeStructure = dataManager.LoadRoleData();
             List<RoleTreeNode> resultNodes = new List<RoleTreeNode>();
@@ -45,8 +45,9 @@ namespace DSAL_CA2
                 resultNodes.Add(_roleTreeStructure);
             }
 
+            int level = 1;
             Queue<RoleTreeNode> q = new Queue<RoleTreeNode>();
-            q = _roleTreeStructure.SearchByLevelOrderTraversal(resultNodes[0], level);
+            q = _roleTreeStructure.SearchByLevelOrderTraversal(selectedNode.localRoleTreeNode, level);
             this.reportingOfficerTextBox.Text = selectedNode.Employee.Name;
             foreach (RoleTreeNode node in q)
             {
@@ -88,11 +89,20 @@ namespace DSAL_CA2
             this.DialogResult = DialogResult.Cancel;
         }
 
-        private void isDummyData_Click(object sender, EventArgs e)
+        private void isDummyData_CheckedChanged(object sender, EventArgs e)
         {
-            nameTextBox.Text = "Dummy";
-            nameTextBox.BackColor = reportingOfficerTextBox.BackColor;
-            isAccCheckBox.Enabled = true;
+            if (isDummyData.Checked)
+            {
+                nameTextBox.Text = "Dummy";
+                nameTextBox.BackColor = reportingOfficerTextBox.BackColor;
+                isAccCheckBox.Enabled = true;
+            } else
+            {
+                nameTextBox.Text = "";
+                nameTextBox.BackColor = roleComboBox.BackColor;
+                isAccCheckBox.Checked = true;
+                isAccCheckBox.Enabled = false;
+            }
         }
     }
 }

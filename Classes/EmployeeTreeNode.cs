@@ -27,7 +27,6 @@ namespace DSAL_CA2.Classes
         {
             ParentEmployeeTreeNode = null;
             ChildEmployeeTreeNodes = new List<EmployeeTreeNode>();
-            localRoleTreeNode = new RoleTreeNode();
             this.Employee = data;
             Employee.Container = this;
             localIndex = 0;
