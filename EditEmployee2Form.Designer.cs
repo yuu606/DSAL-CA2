@@ -44,7 +44,7 @@
             reportingOfficerComboBox = new ComboBox();
             roleComboBox = new ComboBox();
             isAccCheckBox = new CheckBox();
-            isDummyDataCheckBox = new CheckBox();
+            isDummyData = new CheckBox();
             SuspendLayout();
             // 
             // nameTextBox
@@ -222,24 +222,24 @@
             isAccCheckBox.Text = "Salary Accountable?";
             isAccCheckBox.UseVisualStyleBackColor = true;
             // 
-            // isDummyDataCheckBox
+            // isDummyData
             // 
-            isDummyDataCheckBox.AutoSize = true;
-            isDummyDataCheckBox.Enabled = false;
-            isDummyDataCheckBox.Location = new Point(22, 238);
-            isDummyDataCheckBox.Margin = new Padding(2);
-            isDummyDataCheckBox.Name = "isDummyDataCheckBox";
-            isDummyDataCheckBox.Size = new Size(96, 19);
-            isDummyDataCheckBox.TabIndex = 68;
-            isDummyDataCheckBox.Text = "Dummy Data";
-            isDummyDataCheckBox.UseVisualStyleBackColor = true;
+            isDummyData.AutoSize = true;
+            isDummyData.Enabled = false;
+            isDummyData.Location = new Point(22, 238);
+            isDummyData.Margin = new Padding(2);
+            isDummyData.Name = "isDummyData";
+            isDummyData.Size = new Size(96, 19);
+            isDummyData.TabIndex = 68;
+            isDummyData.Text = "Dummy Data";
+            isDummyData.UseVisualStyleBackColor = true;
             // 
             // EditEmployee2Form
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(377, 306);
-            Controls.Add(isDummyDataCheckBox);
+            Controls.Add(isDummyData);
             Controls.Add(isAccCheckBox);
             Controls.Add(roleComboBox);
             Controls.Add(reportingOfficerComboBox);
@@ -282,6 +282,6 @@
         private ComboBox reportingOfficerComboBox;
         private ComboBox roleComboBox;
         private CheckBox isAccCheckBox;
-        private CheckBox isDummyDataCheckBox;
+        private CheckBox isDummyData;
     }
 }

@@ -15,6 +15,8 @@ namespace DSAL_CA2
 {
     public partial class SwapEmployeeForm : Form
     {
+        private DataManager dataManager;
+        private RoleTreeNode _roleTreeStructure;
         public delegate void SwapItemDelegate(string uuid, string selectedNodeText);
         public SwapItemDelegate SwapItemCallback;
 
@@ -28,11 +30,10 @@ namespace DSAL_CA2
             EmployeeTreeNode selectedNode = (EmployeeTreeNode)((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.SelectedNode;
             selectedEmployeeTextBox.Text = selectedNode.Text;
 
-            foreach (TreeNode node in ((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.Nodes)
-            {
-                treeViewEmployee2.Nodes.Add(node);
-            }
-
+            Data data = new Data();
+            dataManager = new DataManager(data);
+            _roleTreeStructure = dataManager.LoadRoleData();
+            treeViewEmployee2.Nodes.Add(_roleTreeStructure);
             treeViewEmployee2.AfterSelect += employeeNodeTreeView_Click;
         }
 

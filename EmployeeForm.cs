@@ -79,8 +79,8 @@ namespace DSAL_CA2
             _editRoleReportOff.Text = "Edit Role/Reporting Officer";
 
             //add submenu items to update menu item
-            _updateMenuItem.DropDownItems.Add(_editEmployeeDetails);
-            _updateMenuItem.DropDownItems.Add(_editRoleReportOff);
+            _updateMenuItem.DropDownItems.Add("Edit Employee Details", null, (s, e) => EditEmployeeDetails_Click());
+            _updateMenuItem.DropDownItems.Add("Edit Role/Reporting Officer", null, (s,e) => EditEmployeeRRO_Click());
 
             //add event handlers
             _employeeMenu.ItemClicked += new ToolStripItemClickedEventHandler(contextMenu_ItemClicked);
@@ -98,21 +98,6 @@ namespace DSAL_CA2
 
             if ((item != null) && (_selectedNode != null))
             {
-                if (item.Text == "Edit Employee Details")
-                {
-                    Employee employee = _selectedNode.Employee;
-                    EditEmployeeForm editEmployeeForm = new EditEmployeeForm();
-                    editEmployeeForm.ModifyItemCallback = new EditEmployeeForm.ModifyItemDelegate(this.ModifyDetailsItemCallbackFn);
-                    editEmployeeForm.ShowDialog(this);
-                }
-                if (item.Text == "Edit Role/Reporting Officer")
-                {
-                    Employee employee = _selectedNode.Employee;
-                    EditEmployee2Form editEmployee2Form = new EditEmployee2Form();
-                    editEmployee2Form.ModifyItem2Callback = new EditEmployee2Form.ModifyItem2Delegate(this.ModifyRROItemCallbackFn);
-                    editEmployee2Form.ShowDialog(this);
-
-                }
                 if (item.Text == "Swap Employee")
                 {
 
@@ -169,6 +154,22 @@ namespace DSAL_CA2
             }
 
         }//end of contextMenu_ItemClicked
+
+        private void EditEmployeeDetails_Click()
+        {
+            Employee employee = _selectedNode.Employee;
+            EditEmployeeForm editEmployeeForm = new EditEmployeeForm();
+            editEmployeeForm.ModifyItemCallback = new EditEmployeeForm.ModifyItemDelegate(this.ModifyDetailsItemCallbackFn);
+            editEmployeeForm.ShowDialog(this);
+        }
+
+        private void EditEmployeeRRO_Click()
+        {
+            Employee employee = _selectedNode.Employee;
+            EditEmployee2Form editEmployee2Form = new EditEmployee2Form();
+            editEmployee2Form.ModifyItem2Callback = new EditEmployee2Form.ModifyItem2Delegate(this.ModifyRROItemCallbackFn);
+            editEmployee2Form.ShowDialog(this);
+        }
 
         private void contextMenu_Opening(object sender, CancelEventArgs e)
         {
