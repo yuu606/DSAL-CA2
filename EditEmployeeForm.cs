@@ -32,13 +32,21 @@ namespace DSAL_CA2
             isDummyData.Click += isDummyData_Click;
 
             EmployeeTreeNode selectedNode = (EmployeeTreeNode)((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.SelectedNode;
-            int level = selectedNode.Level;
+            String parentRoleUUID = selectedNode.localRoleTreeNode.Role.UUID;
 
-            data = new Data();
-            data.RoleTreeStructure = _roleTreeStructure;
+            Data data = new Data();
             dataManager = new DataManager(data);
             _roleTreeStructure = dataManager.LoadRoleData();
-            Queue<RoleTreeNode> q = _roleTreeStructure.SearchByLevelOrderTraversal(_roleTreeStructure, level);
+            List<RoleTreeNode> resultNodes = new List<RoleTreeNode>();
+            _roleTreeStructure.SearchByUUID(parentRoleUUID, ref resultNodes);
+
+            if (selectedNode.localRoleTreeNode.Role.Name == "ROOT")
+            {
+                resultNodes.Add(_roleTreeStructure);
+            }
+
+            Queue<RoleTreeNode> q = new Queue<RoleTreeNode>();
+            q = _roleTreeStructure.SearchByLevelOrderTraversal(resultNodes[0], 1);
 
             this.reportingOfficerTextBox.Text = selectedNode.Text;
             this.uuidTextBox.Text = selectedNode.Employee.UUID;
