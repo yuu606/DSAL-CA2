@@ -48,20 +48,39 @@ namespace DSAL_CA2
                 resultNodes.Add(_roleTreeStructure);
             }
 
-            Queue<RoleTreeNode> q = new Queue<RoleTreeNode>();
-            q = _roleTreeStructure.SearchByLevelOrderTraversal(resultNodes[0], 1);
+            String projStr = "No Projects";
+            if (selectedNode.Employee.Projects.Count > 0)
+            {
+                projStr = "";
+                if (selectedNode.Employee.Projects.Count > 1)
+                {
+                    //populate project string
+                    foreach (Project proj in selectedNode.Employee.Projects)
+                    {
+                        projStr += proj.projName + " ";
+                    }
+                }
+                else
+                {
+                    projStr = selectedNode.Employee.Projects[0].projName;
+                }
+            }
 
             //populate textboxes
             this.uuidTextBox.Text = selectedNode.Employee.UUID;
+            this.nameTextBox.Text = selectedNode.Employee.Name;
+            this.salaryTextBox.Text = selectedNode.Employee.Salary.ToString();
             this.isAccCheckBox.Checked = selectedNode.Employee.isSalaryAcc;
             this.isDummyData.Checked = selectedNode.Employee.isDummyData;
             this.reportingOfficerComboBox.SelectedText = selectedNode.localRO.Name;
             this.roleComboBox.SelectedText = selectedNode.localRoleTreeNode.Role.Name;
+            this.projectsTextBox.Text = projStr;
 
-            //populate role combobox options
-            foreach (RoleTreeNode node in q)
+            List<Role> roleList = getRoleList(_roleTreeStructure);
+            roleList.Remove(_roleTreeStructure.Role);
+            foreach (Role role in roleList)//populate role combobox options
             {
-                roleComboBox.Items.Add(node.Role.Name);
+                roleComboBox.Items.Add(role.Name);
             }
 
             //load employee tree structure 
@@ -72,8 +91,8 @@ namespace DSAL_CA2
         {
             //get final value inputs  
             string uuid = uuidTextBox.Text.Trim();
-            string role = roleComboBox.SelectedText;
-            string reportingOfficer = reportingOfficerComboBox.SelectedText;
+            string role = roleComboBox.SelectedItem.ToString();
+            string reportingOfficer = reportingOfficerComboBox.SelectedItem.ToString();
 
             if (uuid != "")
             {
@@ -91,13 +110,14 @@ namespace DSAL_CA2
         {
             //empty reporting officer text
             reportingOfficerComboBox.SelectedText = "";
+            reportingOfficerComboBox.Items.Clear();
             string roleName = roleComboBox.SelectedItem.ToString(); //get selected role name
 
             List<RoleTreeNode> foundNodes = new List<RoleTreeNode>();
             _roleTreeStructure.SearchByRoleName(roleName, ref foundNodes); //find role node via rolename
             RoleTreeNode roleNode = foundNodes[0];
 
-            int level = roleNode.Level + 1; //get parent node's level
+            int level = roleNode.Level - 1; //get parent node's level
             Queue<EmployeeTreeNode> q = _employeeTreeStructure.SearchByLevelOrderTraversal(_employeeTreeStructure, level); //find all employee nodes on that level
 
             while (q.Count > 0)
@@ -122,6 +142,41 @@ namespace DSAL_CA2
                 isAccCheckBox.Checked = true;
                 isAccCheckBox.Enabled = false;
             }
+        }
+
+        private List<Role> getRoleList(RoleTreeNode root)
+        {
+            List<Role> roleList = new List<Role>();
+
+            if (root == null)
+                return null;
+
+            Queue<RoleTreeNode> q = new Queue<RoleTreeNode>();
+            q.Enqueue(root); // Enqueue root
+            while (q.Count != 0)
+            {
+                int n = q.Count;
+
+                // If this node has children
+                while (n > 0)
+                {
+                    // Dequeue an item from queue
+                    // and print it
+                    RoleTreeNode p = q.Peek();
+                    q.Dequeue();
+                    roleList.Add(p.Role);
+
+                    // Enqueue all children of
+                    // the dequeued item
+                    for (int i = 0; i < p.ChildRoleTreeNodes.Count; i++)
+                    {
+                        q.Enqueue(p.ChildRoleTreeNodes[i]);
+                    }
+                    n--;
+                }
+            }
+
+            return roleList;
         }
     }
 }

@@ -24,6 +24,7 @@ namespace DSAL_CA2
         private Data data;
         RoleTreeNode _selectedNode;
         RoleTreeNode _roleTreeStructure;
+        EmployeeTreeNode _employeeTreeStructure;
         private ContextMenuStrip _roleMenu;
         ToolStripMenuItem _removeMenuItem = new ToolStripMenuItem();
         ToolStripMenuItem _addMenuItem = new ToolStripMenuItem();
@@ -61,6 +62,10 @@ namespace DSAL_CA2
             {
                 treeViewRole.Nodes.Add(_roleTreeStructure);
             }
+
+            data.EmployeeTreeStructure = roleManager.LoadEmployeeData();
+            _employeeTreeStructure = data.EmployeeTreeStructure;
+
             treeViewRole.ExpandAll(); //expand tree view 
             treeViewRole.AfterSelect += roleNodeTreeView_Click; //add tree view node onclick event handler
             InitializeMenuTreeView(); //initialize tree view's menu
@@ -108,17 +113,33 @@ namespace DSAL_CA2
                 if (item.Text == "Add Role") //if item is add role 
                 {
                     Role role = _selectedNode.Role; //get selected node's role obj
-                    // if (rolenode info is being used by projects form) { Message.Show(""); }
-                    AddRoleForm addRoleForm = new AddRoleForm(); //instantiate add role form obj
-                    addRoleForm.AddItemCallback = new AddRoleForm.AddItemDelegate(this.AddItemCallbackFn); //add role item callback
-                    addRoleForm.ShowDialog(this);
+                    List<EmployeeTreeNode> resultNodes = new List<EmployeeTreeNode>();
+                    _employeeTreeStructure.usedByProject(role, ref resultNodes);
+                    if (resultNodes.Count != 0)
+                    {
+                        MessageBox.Show("The role structure is currently being used, you are not allowed to add a role");
+                    }
+                    else
+                    {
+                        AddRoleForm addRoleForm = new AddRoleForm(); //instantiate add role form obj
+                        addRoleForm.AddItemCallback = new AddRoleForm.AddItemDelegate(this.AddItemCallbackFn); //add role item callback
+                        addRoleForm.ShowDialog(this);
+                    }
                 }
                 if (item.Text == "Remove Role") //if item is remove role 
                 {
-                    //if (rolenode info is being used by employee node) { Message.Show("Unable to delete selected role. There are currently employees under the selected role"); }
-                    MessageBox.Show("Are you sure you want to delete the role? Child roles will also be deleted."); 
-                    _roleTreeStructure.DeleteNode(_selectedNode.ParentRoleTreeNode, _selectedNode); //delete node from actual role tree structure 
-                    treeViewRole.Nodes.Remove(_selectedNode); //remove node from role tree view 
+                    List<EmployeeTreeNode> resultNodes = new List<EmployeeTreeNode>();
+                    _employeeTreeStructure.doesRoleExist(_selectedNode.Role, ref resultNodes);
+                    if (resultNodes.Count != 0)
+                    {
+                        MessageBox.Show("The role structure is currently being used by employees, you are not allowed to remove the role");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Are you sure you want to delete the role? Child roles will also be deleted.");
+                        _roleTreeStructure.DeleteNode(_selectedNode.ParentRoleTreeNode, _selectedNode); //delete node from actual role tree structure 
+                        treeViewRole.Nodes.Remove(_selectedNode); //remove node from role tree view
+                    }
                 } 
             }
 

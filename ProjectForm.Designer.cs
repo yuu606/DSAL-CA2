@@ -191,6 +191,8 @@
             // 
             // teamLeadComboBox
             // 
+            teamLeadComboBox.BackColor = SystemColors.ScrollBar;
+            teamLeadComboBox.Enabled = false;
             teamLeadComboBox.FormattingEnabled = true;
             teamLeadComboBox.Location = new Point(159, 243);
             teamLeadComboBox.Margin = new Padding(2);
@@ -365,6 +367,7 @@
             // textBoxConsole
             // 
             textBoxConsole.BackColor = SystemColors.Menu;
+            textBoxConsole.Enabled = false;
             textBoxConsole.Location = new Point(514, 424);
             textBoxConsole.Margin = new Padding(2);
             textBoxConsole.Multiline = true;
@@ -427,7 +430,7 @@
             // 
             // teamLead2ComboBox
             // 
-            teamLead2ComboBox.BackColor = SystemColors.Menu;
+            teamLead2ComboBox.BackColor = SystemColors.ScrollBar;
             teamLead2ComboBox.Enabled = false;
             teamLead2ComboBox.FormattingEnabled = true;
             teamLead2ComboBox.Location = new Point(129, 122);

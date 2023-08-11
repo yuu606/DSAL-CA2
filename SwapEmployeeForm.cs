@@ -16,8 +16,8 @@ namespace DSAL_CA2
     public partial class SwapEmployeeForm : Form
     {
         private DataManager dataManager;
-        private RoleTreeNode _roleTreeStructure;
-        public delegate void SwapItemDelegate(string uuid, string selectedNodeText);
+        private EmployeeTreeNode _employeeTreeStructure;
+        public delegate void SwapItemDelegate(int index2, string uuid2);
         public SwapItemDelegate SwapItemCallback;
 
         public SwapEmployeeForm()
@@ -32,8 +32,9 @@ namespace DSAL_CA2
 
             Data data = new Data();
             dataManager = new DataManager(data);
-            _roleTreeStructure = dataManager.LoadRoleData();
-            treeViewEmployee2.Nodes.Add(_roleTreeStructure);
+            _employeeTreeStructure = dataManager.LoadEmployeeData();
+            treeViewEmployee2.Nodes.Add(_employeeTreeStructure);
+            treeViewEmployee2.ExpandAll();
             treeViewEmployee2.AfterSelect += employeeNodeTreeView_Click;
         }
 
@@ -44,20 +45,33 @@ namespace DSAL_CA2
 
         private void swapButton_Click(object sender, EventArgs e)
         {
-            string uuid = uuidTextBox.Text.Trim();
-            string selectedNodeText = selectedEmployeeTextBox.Text.Trim();
-
             EmployeeTreeNode selectedNode = (EmployeeTreeNode)((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.SelectedNode;
+            string uuid = selectedNode.Employee.UUID;
+            string uuid2 = uuidTextBox.Text.Trim();
+            int index2 = treeViewEmployee2.SelectedNode.Index;
+
             if (selectedNode.Level != treeViewEmployee2.SelectedNode.Level)
             {
                 MessageBox.Show("You can only swap employees on the same role level");
             }
             else
             {
-                if (uuid != "" && selectedNodeText != "")
+                if (index2 != null || uuid2 != "" )
                 {
-                    SwapItemCallback(uuid, selectedNodeText);
-                    this.DialogResult = DialogResult.OK;
+                    if (uuid == uuid2)
+                    {
+                        MessageBox.Show("You cannot swap the same employee");
+                        return;
+                    }
+                    else
+                    {
+                        SwapItemCallback(index2, uuid2);
+                        this.DialogResult = DialogResult.OK;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("you have not selected a node to swap");
                 }
             }
         }

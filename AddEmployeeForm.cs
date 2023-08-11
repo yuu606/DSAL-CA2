@@ -55,11 +55,11 @@ namespace DSAL_CA2
 
         private void addButton_Click(object sender, EventArgs e)
         {
+            EmployeeTreeNode selectedNode = (EmployeeTreeNode)((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.SelectedNode;
             try
             {
                 string employeeName = nameTextBox.Text.Trim();
                 int salary = int.Parse(salaryTextBox.Text.Trim());
-                string role = roleComboBox.SelectedItem.ToString();
                 string reportingOfficer = reportingOfficerTextBox.Text.Trim();
                 bool isDummyDataValue = false;
                 bool isSalaryAcc = true;
@@ -67,29 +67,48 @@ namespace DSAL_CA2
                 if (salary <= 0)
                 {
                     MessageBox.Show("Employee salary must not be less than 0. Please enter a valid employee salary");
-                }
-
-                if (isDummyDataValue)
+                } else if (selectedNode.ParentEmployeeTreeNode.Employee.Salary < salary)
                 {
-                    isDummyDataValue = true;
-                    if (isAccCheckBox.Checked == false)
-                    {
-                        isSalaryAcc = false;
-                    }
-                    else
-                    {
-                        isSalaryAcc = true;
-                    }
+                    MessageBox.Show("Employee salary must not be higher than its reporting officer's salary");
                 }
                 else
                 {
-                    isDummyDataValue = false;
-                }
+                    if (roleComboBox.SelectedItem == null)
+                    {
+                        MessageBox.Show("Please select a role before adding");
+                    }
+                    else
+                    {
+                        string role = roleComboBox.SelectedItem.ToString();
 
-                if (employeeName != "")
-                {
-                    AddItemCallback(employeeName, salary, role, reportingOfficer, isDummyDataValue, isSalaryAcc);
-                    this.DialogResult = DialogResult.OK;
+                        if (isAccCheckBox.Checked == false)
+                        {
+                            isSalaryAcc = false;
+                        }
+                        else
+                        {
+                            isSalaryAcc = true;
+                        }
+
+                        if (isDummyData.Checked == false)
+                        {
+                            isDummyDataValue = false;
+                        }
+                        else
+                        {
+                            isDummyDataValue = true;
+                        }
+
+                        if (employeeName != "" && role != "" && reportingOfficer != "")
+                        {
+                            AddItemCallback(employeeName, salary, role, reportingOfficer, isDummyDataValue, isSalaryAcc);
+                            this.DialogResult = DialogResult.OK;
+                        }
+                        else
+                        {
+                            MessageBox.Show("Something went wrong");
+                        }
+                    }
                 }
             }
             catch (FormatException)

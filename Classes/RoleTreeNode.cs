@@ -76,7 +76,7 @@ namespace DSAL_CA1.Classes
 
                     // Enqueue all children of
                     // the dequeued item
-                    for (int i = 0; i < p.ChildTreeNodes.Count; i++)
+                    for (int i = 0; i < p.ChildRoleTreeNodes.Count; i++)
                         q.Enqueue(p.ChildRoleTreeNodes[i]);
                     n--;
                 }
@@ -123,7 +123,7 @@ namespace DSAL_CA1.Classes
             if (info == null)
                 throw new System.ArgumentNullException("info");
             this.Role = (Role)info.GetValue("Role", typeof(Role));
-            this.Role.Container = this;
+            //this.Role.Container = this;
             this.ChildRoleTreeNodes = (List<RoleTreeNode>)info.GetValue("ChildrenRoleTreeNodes", typeof(List<RoleTreeNode>));
             this.ParentRoleTreeNode = (RoleTreeNode)info.GetValue("ParentRoleTreeNode", typeof(RoleTreeNode));
         }//end of RoleTreeNode [ DESERIALIZE ]

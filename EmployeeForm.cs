@@ -100,7 +100,6 @@ namespace DSAL_CA2
             {
                 if (item.Text == "Swap Employee")
                 {
-
                     Employee employee = _selectedNode.Employee;
                     SwapEmployeeForm swapEmployeeForm = new SwapEmployeeForm();
                     swapEmployeeForm.SwapItemCallback = new SwapEmployeeForm.SwapItemDelegate(this.SwapItemCallbackFn);
@@ -114,22 +113,17 @@ namespace DSAL_CA2
                 }
                 if (item.Text == "Remove Employee")
                 {
-
                     //check if the team will remain complete after removing the employee 
                     List<RoleTreeNode> roleNodes = new List<RoleTreeNode>();
                     _roleTreeStructure.SearchByRoleName(_selectedNode.ParentEmployeeTreeNode.localRoleTreeNode.Role.Name, ref roleNodes);
                     RoleTreeNode _roleParent = roleNodes[0];
-
-                    EmployeeTreeNode _employeeParent = employeeManager.CopyTreeNode(_selectedNode.ParentEmployeeTreeNode);
-                    List<EmployeeTreeNode> resultNodes = new List<EmployeeTreeNode>();
-                    _employeeParent.SearchByEmployeeName(_selectedNode.Employee.Name, ref resultNodes);
-                    _employeeParent.DeleteNode(_employeeParent, resultNodes[0]);
+                    EmployeeTreeNode _employeeParent = _selectedNode.ParentEmployeeTreeNode;
 
                     bool isEqual = employeeManager.IsTeamFull(_roleParent, _employeeParent);
 
                     //check if employee has been assigned a project
                     //check if employee has subordinates
-                    if (_selectedNode.ChildEmployeeTreeNodes.Count > 0 || _selectedNode.Employee.Projects.Count > 0 || isEqual == false)
+                    if (_selectedNode.ChildEmployeeTreeNodes.Count > 0 || _selectedNode.Employee.Projects.Count > 0 || isEqual == true)
                     {
                         String title = "Execute Employee Swap";
                         string msg = "The employee can only be removed if there are no subordinates, no assigned projects or " +
@@ -147,9 +141,17 @@ namespace DSAL_CA2
                     else
                     {
                         MessageBox.Show("confirm removal of employee? Click OK to proceed.");
-                        _employeeTreeStructure.DeleteNode(_selectedNode.ParentEmployeeTreeNode, _selectedNode);
+                        List<EmployeeTreeNode> resultNodes = new List<EmployeeTreeNode>();
+                        _employeeParent.SearchByEmployeeName(_selectedNode.Employee.Name, ref resultNodes);
+                        Role role = resultNodes[0].localRoleTreeNode.Role;
+                        resultNodes[0].Employee.roleList.Remove(role);
+                        _employeeParent.DeleteNode(_employeeParent, resultNodes[0]);
+                        //_employeeTreeStructure.DeleteNode(_selectedNode.ParentEmployeeTreeNode, _selectedNode);
                         treeViewEmployee.Nodes.Remove(_selectedNode);
                     }
+
+                    employeeManager.SaveData();
+                    treeViewEmployee.ExpandAll();
                 }
             }
 
@@ -194,7 +196,7 @@ namespace DSAL_CA2
                     this._updateMenuItem.Visible = true;
                     this._removeMenuItem.Visible = true;
                     this._swapMenuItem.Visible = true;
-                    this._addMenuItem.Visible = false;
+                    this._addMenuItem.Enabled = false;
                 }
                 this._updateMenuItem.Visible = true;
                 this._removeMenuItem.Visible = true;
@@ -252,7 +254,19 @@ namespace DSAL_CA2
             resultNodes[0].Employee.Salary = salary;
             resultNodes[0].Employee.isSalaryAcc = isSalaryAcc;
             resultNodes[0].Employee.isDummyData = isDummyData;
-            resultNodes[0].Text = employeeName;
+            string roleText = "";
+            int i = 0;
+            foreach (Role role in resultNodes[0].Employee.roleList)
+            {
+                roleText += role.Name;
+                if (i == 1)
+                {
+                    roleText += ", " + role.Name;
+                }
+                i++;
+            }
+            string nodeText = resultNodes[0].Employee.Name + " - " + roleText + " (S$" + resultNodes[0].Employee.Salary + ")";
+            resultNodes[0].Text = nodeText;
             employeeManager.SaveData();
             treeViewEmployee.ExpandAll();
         }//end of ModifyItemCallbackFn method
@@ -269,24 +283,120 @@ namespace DSAL_CA2
 
             Employee employeeRef = uuidNodes[0].Employee; //get referenced employee
             EmployeeTreeNode newEmployeeTreeNode = new EmployeeTreeNode(employeeRef); //instantiate new employee tree node
+            newEmployeeTreeNode.Employee.roleList.Add(roleNodes[0].Role);
             newEmployeeTreeNode.localRoleTreeNode.Role = roleNodes[0].Role; //assign local role
             newEmployeeTreeNode.localRO = employeeNodes[0].Employee; //assign local RO
+
+            string roleText = "";
+            int i = 0;
+            foreach (Role Role in newEmployeeTreeNode.Employee.roleList)
+            {
+                if (i == 1)
+                {
+                    roleText += ", " + Role.Name;
+                }
+                else
+                {
+                    roleText = Role.Name;
+                }
+                i++;
+            }
+            string nodeText = newEmployeeTreeNode.Employee.Name + " - " + roleText + " (S$" + newEmployeeTreeNode.Employee.Salary + ")";
+            newEmployeeTreeNode.Text = nodeText;
+            uuidNodes[0].Text = nodeText;
             employeeNodes[0].AddChildEmployeeTreeNode(newEmployeeTreeNode); //add new employee tree node 
 
             employeeManager.SaveData();
             treeViewEmployee.ExpandAll();
         }
 
-        private void SwapItemCallbackFn(string uuid, string selectedNodeText)
+        private void SwapItemCallbackFn(int index2, string uuid2)
         {
+            //get main form selected node details 
+            EmployeeTreeNode treeNode = (EmployeeTreeNode)treeViewEmployee.SelectedNode;
+            string uuid = treeNode.Employee.UUID;
+            int index1 = treeNode.Index;
+
+            //get main form selected node 
             List<EmployeeTreeNode> resultNodes = new List<EmployeeTreeNode>();
             _employeeTreeStructure.SearchByUUID(uuid, ref resultNodes);
             EmployeeTreeNode node1 = resultNodes[0];
 
-            TreeNode[] foundNode = treeViewEmployee.Nodes.Find(selectedNodeText, true);
-            EmployeeTreeNode node2 = (EmployeeTreeNode)foundNode[0];
+            //get swap employee form selected node 
+            List<EmployeeTreeNode> resultNodes2 = new List<EmployeeTreeNode>();
+            _employeeTreeStructure.SearchByUUID(uuid2, ref resultNodes2);
+            EmployeeTreeNode node2 = resultNodes2[0];
 
-            _employeeTreeStructure.SwapNodes(node1, node2);
+            EmployeeTreeNode parent1 = node1.ParentEmployeeTreeNode;
+            EmployeeTreeNode parent2 = node2.ParentEmployeeTreeNode;
+            int count1 = parent1.Nodes.Count;
+            int count2 = parent2.Nodes.Count;
+
+            //get both selected nodes' roles 
+            Role role1 = node1.localRoleTreeNode.Role;
+            Role role2 = node2.localRoleTreeNode.Role;
+
+            //swap roles in role list
+            node1.Employee.roleList.Remove(role1);
+            node1.Employee.roleList.Add(role2);
+            node2.Employee.roleList.Remove(role2);
+            node2.Employee.roleList.Add(role1);
+
+            //swap local role tree node
+            RoleTreeNode temp = new RoleTreeNode();
+            temp = node1.localRoleTreeNode;
+            node1.localRoleTreeNode = node2.localRoleTreeNode;
+            node2.localRoleTreeNode = temp;
+
+            //swap parents 
+            
+            parent1.ChildEmployeeTreeNodes.Remove(node1);
+            parent1.ChildEmployeeTreeNodes.Add(node2);
+            parent2.ChildEmployeeTreeNodes.Remove(node2);
+            parent2.ChildEmployeeTreeNodes.Add(node1);
+
+            node1.ParentEmployeeTreeNode = parent2;
+            node2.ParentEmployeeTreeNode = parent1;
+
+            TreeNode parent = (TreeNode)node2.ParentEmployeeTreeNode;
+
+            //get node list
+            List<EmployeeTreeNode> swappedNodes = new();
+            swappedNodes.Add(node1);
+            swappedNodes.Add(node2);
+
+            //set node text
+            for (int k = 0; k < 2; k++)
+            {
+                String nodeText = "";
+                string roleText = "";
+                int i = 0;
+                if (swappedNodes[k].Employee.roleList.Count > 1)
+                {
+                    //populate project string
+                    foreach (Role role in swappedNodes[k].Employee.roleList)
+                    {
+                        roleText += role.Name;
+                        if (i == 1)
+                        {
+                            roleText += ", " + role.Name;
+                        }
+                        i++;
+                    }
+                }
+                else
+                {
+                    roleText = swappedNodes[k].Employee.roleList[0].Name;
+                }
+                nodeText = swappedNodes[k].Employee.Name + " - " + roleText + " (S$" + swappedNodes[k].Employee.Salary + ")";
+                swappedNodes[k].Text = nodeText;
+            }
+
+            //swap tree node in tree view 
+            parent2.Nodes.RemoveAt(index2);
+            parent1.Nodes.RemoveAt(index1);
+            parent2.Nodes.Insert(index2, node1);
+            parent1.Nodes.Insert(index1, node2);
 
             employeeManager.SaveData();
             treeViewEmployee.ExpandAll();
@@ -301,12 +411,13 @@ namespace DSAL_CA2
             //check whether employee has projects assigned 
             if (employeeNode.Employee.Projects.Count> 0)
             {
+                projStr = "";
                 if (employeeNode.Employee.Projects.Count > 1)
                 {
                     //populate project string
                     foreach (Project proj in employeeNode.Employee.Projects)
                     {
-                        projStr += proj.projName + " ";
+                        projStr += proj.projName + ", ";
                     }
                 }
                 else
@@ -368,6 +479,7 @@ namespace DSAL_CA2
         private void buttonSave_Click(object sender, EventArgs e)
         {
             employeeManager.SaveData();
+            MessageBox.Show("Employee hierarchy simulation has been successfully saved");
         }
 
         //Load button event handler 

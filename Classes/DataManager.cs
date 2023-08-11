@@ -12,16 +12,7 @@ namespace DSAL_CA2.Classes
 {
     [Serializable]
     internal class DataManager
-    //******************************** IMPORTANT *********************************************
-    //About DataManager
-    //You should manage all the employee data, role data and project data by applying code
-    //in this DataManager instead of having seperate RoleManager, EmployeeManager and ProjectManager class
-    //****************************************************************************************
     {
-        //public RoleTreeNode RoleTreeStructure { get; set; }
-        //public EmployeeTreeNode EmployeeTreeStructure { get; set; }
-        //public List<Project> ProjectList { get; set; }   
-
         private Data _data;
         private string _filePath; // Saved data file path
 
@@ -93,7 +84,13 @@ namespace DSAL_CA2.Classes
         public List<Project> LoadProjectList()
         {
             _data = ReadFromFile();
+            if (_data.ProjectList == null)
+            {
+                _data.ProjectList = new List<Project>();
+            }
+
             return _data.ProjectList;
+            
         } 
         //--------------------------------------------------------------------------------------------
 
@@ -106,7 +103,7 @@ namespace DSAL_CA2.Classes
                 bf.Serialize(stream, this._data);
                 stream.Close();
 
-                MessageBox.Show("Data is added to file");
+                MessageBox.Show("Data Saved");
             }
             catch (Exception ex)
             {
@@ -151,22 +148,28 @@ namespace DSAL_CA2.Classes
             if (roleTree == null || employeeTree == null)
                 return false;
 
-            if (!roleTree.Role.Equals(employeeTree.localRoleTreeNode.Role))
+            if (!(roleTree.Role.Name == employeeTree.localRoleTreeNode.Role.Name))
                 return false;
 
             if (employeeTree.ChildEmployeeTreeNodes.Count < roleTree.ChildRoleTreeNodes.Count)
                 return false;
 
+            int j = 0;
             for (int i = 0; i < fullTeam.Count; i++)
             {
                 if (fullTeam[i].Name.Equals(employeeTree.ChildEmployeeTreeNodes[i].localRoleTreeNode.Role.Name))
                 {
-                    i++;
+                    j++;
                 }
                 else
                 {
                     return false;
                 }
+            }
+
+            if (j > fullTeam.Count)
+            {
+                return false;
             }
 
             return true;

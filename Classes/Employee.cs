@@ -17,8 +17,6 @@ namespace DSAL_CA2.Classes
         public List<Employee> ReportingOfficer { get; set; }
         public string Name { get; set; }
         public int Salary { get; set; }
-        //public Role role { get; set; }
-        //public Role role2 { get; set; }
         public List<Role> roleList { get; set; }
         public List<Project> Projects { get; set; }
         public bool isDummyData { get; set; }

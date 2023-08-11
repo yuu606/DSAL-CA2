@@ -28,18 +28,21 @@ namespace DSAL_CA2.Classes
             ParentEmployeeTreeNode = null;
             ChildEmployeeTreeNodes = new List<EmployeeTreeNode>();
             localRoleTreeNode = new RoleTreeNode();
+            localRO = new Employee();
             this.Employee = data;
             Employee.Container = this;
             localIndex = 0;
-            localRO = null;
             string roleText = "";
             int i = 0;
-            foreach (Role role in data.roleList)
+            foreach (Role Role in this.Employee.roleList)
             {
-                roleText += role.Name;
                 if (i == 1)
                 {
-                    roleText +=  ", " + role.Name;
+                    roleText += ", " + Role.Name;
+                }
+                else
+                {
+                    roleText = Role.Name;
                 }
                 i++;
             }
@@ -136,7 +139,7 @@ namespace DSAL_CA2.Classes
 
                     // Enqueue all children of
                     // the dequeued item
-                    for (int i = 0; i < p.ChildTreeNodes.Count; i++)
+                    for (int i = 0; i < p.ChildEmployeeTreeNodes.Count; i++)
                         q.Enqueue(p.ChildEmployeeTreeNodes[i]);
                     n--;
                 }
@@ -221,21 +224,120 @@ namespace DSAL_CA2.Classes
             }
         }// end of SearchByEmployeeName
 
-        public void PreOrderTraversal(Action<Employee> action)
+        public int GetTreeDepth()
         {
-            PreOrderTraversalRecursive(this, action);
+            return GetTreeDepthRecursive(this);
         }
 
-        private void PreOrderTraversalRecursive(EmployeeTreeNode node, Action<Employee> action)
+        private int GetTreeDepthRecursive(EmployeeTreeNode node)
         {
-            if (node == null)
-                return;
+            if (node.ChildEmployeeTreeNodes.Count == 0)
+                return 1;
 
-            action(node.Employee);
-
+            int maxChildDepth = 0;
             foreach (var child in node.ChildEmployeeTreeNodes)
             {
-                PreOrderTraversalRecursive(child, action);
+                int childDepth = GetTreeDepthRecursive(child);
+                maxChildDepth = Math.Max(maxChildDepth, childDepth);
+            }
+
+            return maxChildDepth + 1;
+        }
+
+        public List<int> GetBranchSumValues()
+        {
+            List<int> branchSums = new List<int>();
+            CalculateBranchSum(this, new List<int>(), branchSums);
+            return branchSums;
+        }
+
+        private void CalculateBranchSum(EmployeeTreeNode node, List<int> currentBranch, List<int> branchSums)
+        {
+            currentBranch.Add(node.Employee.Salary);
+
+            if (node.localRoleTreeNode.Role.isProjLead == true)
+            {
+                int sum = 0;
+                foreach (int value in currentBranch)
+                {
+                    sum += value;
+                }
+
+                int childSum = 0;
+                foreach (var treeNode in node.ChildEmployeeTreeNodes)
+                {
+                    childSum += treeNode.Employee.Salary;
+                }
+
+                int finalsum = sum + childSum;
+                branchSums.Add(finalsum);
+            }
+            else
+            {
+                foreach (var child in node.ChildEmployeeTreeNodes)
+                {
+                    CalculateBranchSum(child, new List<int>(currentBranch), branchSums);
+                }
+            }
+        }
+
+        public void TraverseUpAddProject(Project proj)
+        {
+            EmployeeTreeNode current = this;
+            while (current != null)
+            {
+                current.Employee.Projects.Add(proj);
+                current = current.ParentEmployeeTreeNode;
+            }
+        }
+
+        public void TraverseUpDeleteProject(Project proj)
+        {
+            EmployeeTreeNode current = this;
+            while (current != null)
+            {
+                current.Employee.Projects.Remove(proj);
+                current = current.ParentEmployeeTreeNode;
+            }
+        }
+
+        public void doesRoleExist(Role role, ref List<EmployeeTreeNode> foundNodes)
+        {
+            if (this.ChildEmployeeTreeNodes.Count > 0)//Note: This if block may not be necessary at all. Though the logic works.
+            {
+                int i = 0;
+                for (i = 0; i < this.ChildEmployeeTreeNodes.Count; i++)
+                {
+                    if (this.ChildEmployeeTreeNodes[i].localRoleTreeNode.Role.Name == role.Name)
+                    {
+                        foundNodes.Add(this.ChildEmployeeTreeNodes[i]);
+                    }
+
+                    this.ChildEmployeeTreeNodes[i].doesRoleExist(role, ref foundNodes);
+                    
+                }
+            }
+        }
+
+        public void usedByProject(Role role, ref List<EmployeeTreeNode> foundNodes)
+        {
+            if (this.ChildEmployeeTreeNodes.Count > 0)//Note: This if block may not be necessary at all. Though the logic works.
+            {
+                int i = 0;
+                for (i = 0; i < this.ChildEmployeeTreeNodes.Count; i++)
+                {
+                    if (this.ChildEmployeeTreeNodes[i].localRoleTreeNode.Role.Name == role.Name)
+                    {
+                        if (this.ChildEmployeeTreeNodes[i].Employee.Projects.Count > 0)
+                        {
+                            foundNodes.Add(this.ChildEmployeeTreeNodes[i]);
+                        }
+                    }
+                    else
+                    {
+                        this.ChildEmployeeTreeNodes[i].usedByProject(role, ref foundNodes);
+                    }
+                }
             }
         }
     }

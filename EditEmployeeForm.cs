@@ -29,7 +29,7 @@ namespace DSAL_CA2
 
         private void EditEmployeeForm_Load(object sender, EventArgs e)
         {
-            isDummyData.Click += isDummyData_Click;
+            isDummyData.CheckedChanged += isDummyData_CheckedChanged;
 
             EmployeeTreeNode selectedNode = (EmployeeTreeNode)((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.SelectedNode;
             String projStr = "";
@@ -56,10 +56,10 @@ namespace DSAL_CA2
             this.reportingOfficerTextBox.Text = selectedNode.localRO.Name;
             this.nameTextBox.Text = selectedNode.Employee.Name;
             this.salaryTextBox.Text = selectedNode.Employee.Salary.ToString();
-            this.roleTextBox.Text = selectedNode.localRoleTreeNode.ToString();
+            this.roleTextBox.Text = selectedNode.localRoleTreeNode.Role.Name;
             this.projectsTextBox.Text = projStr;
             this.isDummyData.Checked = selectedNode.Employee.isDummyData;
-            this.isAccCheckBox.Checked = selectedNode.Employee.isSalaryAcc;
+            this.isAccCheckBox.Checked = selectedNode.Employee.isSalaryAcc; 
         }
 
         private void editButton_Click(object sender, EventArgs e)
@@ -74,18 +74,10 @@ namespace DSAL_CA2
 
                 if (salary <= 0)
                 {
-                    MessageBox.Show("Employee salary must not be less than 0. Please enter a valid employee salary");
-                    return;
+                    MessageBox.Show("Employee salary must not be less than $1. Please enter a valid employee salary");
                 }
-
-                if (isAccCheckBox.Checked == false)
+                else
                 {
-                    isSalaryAcc = false;
-                }
-
-                if (isDummyDataValue)
-                {
-                    isDummyDataValue = true;
                     if (isAccCheckBox.Checked == false)
                     {
                         isSalaryAcc = false;
@@ -94,16 +86,25 @@ namespace DSAL_CA2
                     {
                         isSalaryAcc = true;
                     }
-                }
-                else
-                {
-                    isDummyDataValue = false;
-                }
 
-                if (employeeName != "" && salary > 0)
-                {
-                    ModifyItemCallback(uuid, employeeName, salary, isSalaryAcc, isDummyDataValue);
-                    this.DialogResult = DialogResult.OK;
+                    if (isDummyData.Checked == false)
+                    {
+                        isDummyDataValue = false;
+                    }
+                    else
+                    {
+                        isDummyDataValue = true;
+                    }
+
+                    if (employeeName != "" && uuid != "")
+                    {
+                        ModifyItemCallback(uuid, employeeName, salary, isSalaryAcc, isDummyDataValue);
+                        this.DialogResult = DialogResult.OK;
+                    }
+                    else
+                    {
+                        MessageBox.Show("Something went wrong");
+                    }
                 }
             }
             catch (FormatException)
@@ -117,11 +118,21 @@ namespace DSAL_CA2
             this.DialogResult = DialogResult.Cancel;
         }
 
-        private void isDummyData_Click(object sender, EventArgs e)
+        private void isDummyData_CheckedChanged(object sender, EventArgs e)
         {
-            nameTextBox.Text = "Dummy";
-            nameTextBox.BackColor = reportingOfficerTextBox.BackColor;
-            isAccCheckBox.Enabled = true;
+            if (isDummyData.Checked)
+            {
+                nameTextBox.Text = "Dummy";
+                nameTextBox.BackColor = reportingOfficerTextBox.BackColor;
+                isAccCheckBox.Enabled = true;
+            }
+            else
+            {
+                nameTextBox.Text = "";
+                nameTextBox.BackColor = roleTextBox.BackColor;
+                isAccCheckBox.Checked = true;
+                isAccCheckBox.Enabled = false;
+            }
         }
     }
 }
