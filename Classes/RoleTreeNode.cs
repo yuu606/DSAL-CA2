@@ -186,7 +186,7 @@ namespace DSAL_CA1.Classes
                     q.Dequeue();
 
                     for (int i = 0; i < p.ChildRoleTreeNodes.Count; i++)
-                        q.Enqueue(p.ChildRoleTreeNodes[i]);
+                        q.Enqueue(p);
                     n--;
                 }
 

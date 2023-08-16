@@ -154,7 +154,6 @@ namespace DSAL_CA2
                     treeViewEmployee.ExpandAll();
                 }
             }
-
         }//end of contextMenu_ItemClicked
 
         private void EditEmployeeDetails_Click()
@@ -225,7 +224,7 @@ namespace DSAL_CA2
 
             //instantiate new employee tree node
             EmployeeTreeNode newEmployeeNode = new EmployeeTreeNode(newEmployee);
-            newEmployeeNode.localRoleTreeNode.Role = roleNodes[0].Role;
+            newEmployeeNode.localRoleTreeNode = new RoleTreeNode(roleNodes[0].Role);
 
             if (employeeNodes.Count == 0)
             {
@@ -477,6 +476,8 @@ namespace DSAL_CA2
         private void buttonReset_Click(object sender, EventArgs e)
         {
             treeViewEmployee.Nodes.Clear();
+            this.treeViewEmployee.Nodes.Add(employeeManager.generateDefaultEmployeeTree()); //set up default tree view structure 
+            MessageBox.Show("Hierarchy simulation has been reset");
         }
 
         //Save button event handler 

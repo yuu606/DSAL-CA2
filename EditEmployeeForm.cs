@@ -50,7 +50,21 @@ namespace DSAL_CA2
             {
                 projStr = "No projects";
             }
+            String parentRoleUUID = selectedNode.localRoleTreeNode.Role.UUID;
 
+            Data data = new Data();
+            dataManager = new DataManager(data);
+            _roleTreeStructure = dataManager.LoadRoleData();
+            List<RoleTreeNode> resultNodes = new List<RoleTreeNode>();
+            _roleTreeStructure.SearchByUUID(parentRoleUUID, ref resultNodes);
+
+            if (selectedNode.localRoleTreeNode.Role.Name == "ROOT")
+            {
+                resultNodes.Add(_roleTreeStructure);
+            }
+
+            Queue<RoleTreeNode> q = new Queue<RoleTreeNode>();
+            q = _roleTreeStructure.SearchByLevelOrderTraversal(resultNodes[0], 1);
             
             this.uuidTextBox.Text = selectedNode.Employee.UUID;
             this.reportingOfficerTextBox.Text = selectedNode.localRO.Name;

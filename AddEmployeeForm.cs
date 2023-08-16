@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using DSAL_CA1.Classes;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace DSAL_CA2
 {
@@ -33,7 +34,7 @@ namespace DSAL_CA2
             EmployeeTreeNode selectedNode = (EmployeeTreeNode)((EmployeeForm)Owner.ActiveMdiChild).treeViewEmployee.SelectedNode;
             String parentRoleUUID = selectedNode.localRoleTreeNode.Role.UUID;
 
-            Data data = new Data();
+            Data data = new Data(); 
             dataManager = new DataManager(data);
             _roleTreeStructure = dataManager.LoadRoleData();
             List<RoleTreeNode> resultNodes = new List<RoleTreeNode>();
