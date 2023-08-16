@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -185,13 +186,35 @@ namespace DSAL_CA2
         {
             List<RoleTreeNode> resultNodes = new List<RoleTreeNode>(); //instantiate role tree node list for search by uuid operator 
             _roleTreeStructure.SearchByUUID(uuid, ref resultNodes); //search for specific node we want to modify
+
+            string oldRoleName = "Backend Developer";
+
             resultNodes[0].Role.Name = roleName; //set updated role name 
             resultNodes[0].Text = roleName; //set updated role name for tree view node text
             resultNodes[0].Role.isProjLead = isProjLead; //set updated isProjLead bool
-            if (isProjLead == true)
+
+            List<EmployeeTreeNode> employeeNodes = new List<EmployeeTreeNode>(); //instantiate employee node list for search by employee role name operator 
+            _employeeTreeStructure.SearchByEmployeeRole(oldRoleName, ref employeeNodes); //search for specific employee node we wish to update 
+            employeeNodes[0].localRoleTreeNode.Role = resultNodes[0].Role;
+
+            if (employeeNodes.Count > 0)//check if employeeNode was found 
             {
-                resultNodes[0].IsLeaf = true; //set updated isLeaf bool
+                foreach (EmployeeTreeNode employeeNode in employeeNodes)
+                {
+                    int i = 0;
+                    foreach (Role role in employeeNode.Employee.roleList)
+                    {
+                        if (role.Name == oldRoleName)
+                        {
+                            employeeNode.Employee.roleList[i].Name = roleName;
+                            employeeNode.Employee.roleList[i].isProjLead = isProjLead;
+                            employeeNode.localRoleTreeNode = resultNodes[0];
+                        }
+                        i++;
+                    }
+                }
             }
+
             textBoxConsole.Text = "Role Edited:" + Environment.NewLine + " Name:" + roleName; //update console text
             roleManager.SaveData(); //save role data 
         }
@@ -276,10 +299,5 @@ namespace DSAL_CA2
             projLeadCheckBox.Checked = roleNode.Role.isProjLead; //set project leader checkbox state
         }
         //---------------------------------------------------------------------------------------------
-
-        private void closing_click(object sender, EventArgs e)
-        {
-            
-        }
     }
 }

@@ -273,14 +273,14 @@ namespace DSAL_CA2
 
             List<EmployeeTreeNode> uuidNodes = new List<EmployeeTreeNode>();
             _employeeTreeStructure.SearchByUUID(teamLeader.UUID, ref uuidNodes); //get employee node
-                                                                                 //
+                                                                                 
             foreach (var child in uuidNodes[0].ChildEmployeeTreeNodes)
             {
                 child.Employee.Projects.Remove(proj);
             }
             uuidNodes[0].TraverseUpDeleteProject(proj);
 
-            projectListView.SelectedItems.Clear();
+            projectListView.SelectedItems[0].SubItems.Clear();
             data.ProjectList.Remove(proj);
             projectManager.SaveData();
             MessageBox.Show("Project has been deleted");

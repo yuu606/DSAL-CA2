@@ -224,6 +224,29 @@ namespace DSAL_CA2.Classes
             }
         }// end of SearchByEmployeeName
 
+        public void SearchByEmployeeRole(string roleName, ref List<EmployeeTreeNode> foundNodes)
+        {
+            if (roleName == "ROOT")
+            {
+                return;
+            }
+            if (this.ChildEmployeeTreeNodes.Count > 0)
+            {
+                int i = 0;
+                for (i = 0; i < this.ChildEmployeeTreeNodes.Count; i++)
+                {
+                    if (this.ChildEmployeeTreeNodes[i].localRoleTreeNode.Role.Name == roleName)
+                    {
+                        foundNodes.Add(this.ChildEmployeeTreeNodes[i]);
+                    }
+                    else
+                    {
+                        this.ChildEmployeeTreeNodes[i].SearchByEmployeeRole(roleName, ref foundNodes);
+                    }
+                }
+            }
+        }// end of SearchByEmployeeName
+
         public int GetTreeDepth()
         {
             return GetTreeDepthRecursive(this);
@@ -339,6 +362,34 @@ namespace DSAL_CA2.Classes
                     }
                 }
             }
+        }
+
+        public void setText()
+        {
+            string nodeText = "";
+            string roleText = "";
+            string projectText = "No Projects";
+
+            int i = 0;
+            if (this.Employee.roleList.Count > 1)
+            {
+                //populate role string
+                foreach (Role role in this.Employee.roleList)
+                {
+                    roleText += role.Name;
+                    if (i == 1)
+                    {
+                        roleText += ", " + role.Name;
+                    }
+                    i++;
+                }
+            }
+            else
+            {
+                roleText = this.Employee.roleList[0].Name;
+            }
+            nodeText = this.Employee.Name + " - " + roleText + " (S$" + this.Employee.Salary + ")";
+            this.Text = nodeText;
         }
     }
 }

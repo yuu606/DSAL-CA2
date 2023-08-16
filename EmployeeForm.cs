@@ -366,31 +366,36 @@ namespace DSAL_CA2
             swappedNodes.Add(node2);
 
             //set node text
-            for (int k = 0; k < 2; k++)
+            foreach (EmployeeTreeNode node in swappedNodes)
             {
-                String nodeText = "";
-                string roleText = "";
-                int i = 0;
-                if (swappedNodes[k].Employee.roleList.Count > 1)
-                {
-                    //populate project string
-                    foreach (Role role in swappedNodes[k].Employee.roleList)
-                    {
-                        roleText += role.Name;
-                        if (i == 1)
-                        {
-                            roleText += ", " + role.Name;
-                        }
-                        i++;
-                    }
-                }
-                else
-                {
-                    roleText = swappedNodes[k].Employee.roleList[0].Name;
-                }
-                nodeText = swappedNodes[k].Employee.Name + " - " + roleText + " (S$" + swappedNodes[k].Employee.Salary + ")";
-                swappedNodes[k].Text = nodeText;
+                node.setText();
             }
+
+            //for (int k = 0; k < 2; k++)
+            //{
+            //    String nodeText = "";
+            //    string roleText = "";
+            //    int i = 0;
+            //    if (swappedNodes[k].Employee.roleList.Count > 1)
+            //    {
+            //        //populate project string
+            //        foreach (Role role in swappedNodes[k].Employee.roleList)
+            //        {
+            //            roleText += role.Name;
+            //            if (i == 1)
+            //            {
+            //                roleText += ", " + role.Name;
+            //            }
+            //            i++;
+            //        }
+            //    }
+            //    else
+            //    {
+            //        roleText = swappedNodes[k].Employee.roleList[0].Name;
+            //    }
+            //    nodeText = swappedNodes[k].Employee.Name + " - " + roleText + " (S$" + swappedNodes[k].Employee.Salary + ")";
+            //    swappedNodes[k].Text = nodeText;
+            //}
 
             //swap tree node in tree view 
             parent2.Nodes.RemoveAt(index2);
@@ -409,21 +414,20 @@ namespace DSAL_CA2
             string projStr = "No Projects";
 
             //check whether employee has projects assigned 
-            if (employeeNode.Employee.Projects.Count> 0)
+            int i = 0;
+            if (employeeNode.Employee.Projects.Count > 0)
             {
                 projStr = "";
-                if (employeeNode.Employee.Projects.Count > 1)
+                //populate project string
+                foreach (Project project in employeeNode.Employee.Projects)
                 {
-                    //populate project string
-                    foreach (Project proj in employeeNode.Employee.Projects)
+                    projStr += project.projName;
+                    if (i > 1)
                     {
-                        projStr += proj.projName + ", ";
+                        projStr += ", " + project.projName;
                     }
                 }
-                else
-                {
-                    projStr = employeeNode.Employee.Projects[0].projName;
-                }
+                i++;
             }
 
             //check whether employee is dummy data 
